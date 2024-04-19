@@ -28,11 +28,11 @@ From these images imported in QuPath projects, some QuPath annotations made by e
 
 <img src="docs/source/images/per_layer_distinguish_23.png" alt="per_layer_distinguish_23.png" width="200"/>
  
-# The pipeline consists of two main steps:
+## The pipeline consists of two main steps:
 1. Within QuPath (Third party application), execute cells detection and export cells features and annotations.
 2. Processing the data exported by QuPath during the previous step, in order to compute the cells density.
  
-# Lexicon
+## Lexicon
 The following definitions will stay in effect throughout the code.
 - S1HL: The rat Hindlimb Somatosensory
 - Annotation: QuPath annotation
@@ -50,18 +50,18 @@ $ cd arch
 $ pip install .
 ```
 
-### Third parties 
-#### Python package
+## Third parties 
+### Python package
 - python third parties libraries are installed during package installation.
 see requirements.txt
-#### QuPath
+### QuPath
 
-#  Input data
-## Input data for groovy script
+##  Input data
+### Input data for groovy script
 - QuPath project including the images to process and these 5 annotations: S1HL, top_left, top_right, bottom_left and bottom_right 
 - cellpose model used in Full_QuPath_script.groovy script to detect cells
 
-## Input data for python single image processing
+### Input data for python single image processing
 - The generated data by the Full_QuPath_script.groovy script
   - detected cells features (csv file)
   - annotations file (json file)
@@ -71,10 +71,10 @@ see requirements.txt
 - pixel size :  a float number that represents the pixel size of the QuPath input inages
 
 
-# Export Cells features and QuPath annotations
+## Export Cells features and QuPath annotations
 - Execute a groovy script thanks to the QuPath script command
 
-# Compute the cells densities as a function of percentage of the S1HL depth processing 
+## Compute the cells densities as a function of percentage of the S1HL depth processing 
 - Read input data from QuPath exported files
 - Convert annotations to cartesian point coordinates and shapely polygon.
 - Split the S1HL polygon following the S1HL "top and bottom lines" shapes in n polygons (named spitted_polygon)
@@ -83,7 +83,7 @@ see requirements.txt
 - Compute the cells densities as function of the percentage of the sscx depth
 - Export result files
 
-# Compute the densities per S1HL layers
+## Compute the densities per S1HL layers
 - Read input data from QuPath exported files
 - Train a ML model from GroundTruth data produced by some experts
 - Use the ML model to predict and affect a layer for each detected cell
@@ -93,7 +93,7 @@ see requirements.txt
 - Compute the cells densities for each layer
 - Export result files
 - 
-# Compute the densities of one image
+## Compute the densities of one image
 - modify ./Config/linux/depth.ini with your configuration
 - execute the python script
 ```shell
@@ -105,11 +105,9 @@ $ pyqupath_processing density --config-file-path ./Config/linux/density.ini
 - execute the python script
 ```shell
 $ pyqupath_processing density --config-file-path ./Config/linux/batch_density.ini
-
 ```
 
-# Compute the cells density per layers
-```
+## Compute the cells density per layers
 
 
 ## Funding & Acknowledgment
