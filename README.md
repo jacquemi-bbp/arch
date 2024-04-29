@@ -42,6 +42,7 @@ The following definitions will stay in effect throughout the code.
 ## Installation
 - QuPath: https://qupath.github.io/
   - QuPath cellpose extension https://github.com/BIOP/qupath-extension-cellpose
+  - cellpose extemsion for qupath. Follow the official instructions: https://cellpose.readthedocs.io/en/latest/
  
 - Python package and its applications.
 ```shell
@@ -58,6 +59,8 @@ see requirements.txt
 
 ##  Input data
 ### Input data for groovy script
+- [cellpose model](cellpose_model/cellpose_residual_on_style_on_concatenation_off_train_2022_01_11_16_14_20)
+
 - QuPath project including the images to process and these 5 annotations: S1HL, top_left, top_right, bottom_left and bottom_right 
 - cellpose model used in Full_QuPath_script.groovy script to detect cells
 
@@ -72,7 +75,9 @@ see requirements.txt
 
 
 ## Export Cells features and QuPath annotations
-- Execute a groovy script thanks to the QuPath script command
+- Modify the pathes inside ./Layer Classiffier.json to make it corresponding to your environment.
+- Execute the following groovy script inside the QuPath application or via a script thanks to the QuPath script command:
+qupath_scripts/full_QuPath_script.groovy
 
 ## Compute the cells densities as a function of percentage of the S1HL depth processing 
 - Read input data from QuPath exported files
