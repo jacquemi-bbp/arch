@@ -17,15 +17,14 @@ Utilities module
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import pandas as pd
-import numpy as np
-import math
+# import math
 import random
+
+# import pandas as pd
+# import numpy as np
+
+
 from sklearn.neighbors import NearestNeighbors
-
-
-class NotValidImage(Exception):
-    pass
 
 
 def stereology_exclusion(dataframe):

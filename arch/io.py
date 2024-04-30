@@ -17,15 +17,15 @@ Read / Write files modules
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from os import listdir, makedirs
-from os.path import isfile, join
+# from os import listdir, makedirs
+# from os.path import isfile, join
+from collections import defaultdict
 import glob
 import numpy as np
 import geojson
-import pandas as pd
-import openpyxl
-from arch.utilities import NotValidImage
-from collections import defaultdict
+
+# import pandas as pd
+# import openpyxl
 
 
 '''
@@ -117,7 +117,7 @@ def read_qupath_annotations(directory_path, image_name):
                                 -----
                                 """
                                 max_len = 0
-                                for i, entry in enumerate(value):
+                                for entry in value:
 
                                     if len(entry) > max_len:
                                         max_len = len(entry)
@@ -164,36 +164,25 @@ def read_qupath_annotations(directory_path, image_name):
                 annotations["bottom_left"],
             ]
         )
-    except KeyError as e:
-        """
-        print(f'! ERROR: {e}')
-        value = input("Could we consider that bottom_left and bottom_right are superposed ? Y/n:\n").lower()
-        while value != 'y' and value != 'n' and len(value) > 0:
-            value = input("Could we consider that bottom_left and bottom_right are superposed ? Y/n:\n")
-        """
-        value = "y"
-
-        if value == "y" or len(value) == 0:
-            try:
-                quadrilateral_pixel_coordinates = np.array(
-                    [
-                        annotations["top_left"],
-                        annotations["top_right"],
-                        annotations["bottom_right"],
-                        annotations["bottom_right"],
-                    ]
-                )
-            except KeyError:
-                quadrilateral_pixel_coordinates = np.array(
-                    [
-                        annotations["top_left"],
-                        annotations["top_right"],
-                        annotations["bottom_left"],
-                        annotations["bottom_left"],
-                    ]
-                )
-        else:
-            raise e
+    except KeyError:
+        try:
+            quadrilateral_pixel_coordinates = np.array(
+                [
+                    annotations["top_left"],
+                    annotations["top_right"],
+                    annotations["bottom_right"],
+                    annotations["bottom_right"],
+                ]
+            )
+        except KeyError:
+            quadrilateral_pixel_coordinates = np.array(
+                [
+                    annotations["top_left"],
+                    annotations["top_right"],
+                    annotations["bottom_left"],
+                    annotations["bottom_left"],
+                ]
+            )
     return s1_pixel_coordinates, quadrilateral_pixel_coordinates, out_of_pia
 
 
@@ -229,15 +218,19 @@ def list_images(
     annotations_geojson_suffix=None,
 ):
     """
-    Generate of dictionary of directory that contains the cell_feature and annotation pathes for each images
+    Generate of dictionary of directory that contains the cell_feature and annotation pathes
+     for each images
 
     Args:
-        cell_features_path (str): input directory that contains export cells features from QuPath
+        cell_features_path (str): input directory that contains export cells features from
+         QuPath
         cell_features_suffix:(str) cell features files suffix
-        annotation_path:(str) input directory that contains export annotations information from QuPath
+        annotation_path:(str) input directory that contains export annotations information from
+         QuPath
         annotations_geojson_suffix:(str) annotation files suffix
     Returns:
-        dictionary of dictionary: key image prefix -> dictionary of files CELL_POSITIONS_PATH and ANNOTATIONS_PATH
+        dictionary of dictionary: key image prefix -> dictionary of files CELL_POSITIONS_PATH and
+         ANNOTATIONS_PATH
     """
 
     cells_file_list = []

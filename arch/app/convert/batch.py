@@ -1,3 +1,5 @@
+""" The convert click command """
+
 # Copyright (C) 2021  Blue Brain Project, EPFL
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,30 +18,24 @@
 import configparser
 import click
 
+from arch.convert import single_image_conversion
 from arch.io import (
     # write_dataframe_to_file,
     list_images,
     # get_qpproject_images_metadata,
-    # save_dataframe_without_space_in_path,
+    # save_dataframe
+    # _without_space_in_path,
 )
-
-"""
-from arch.convert import (
-    convert,
-)
-from arch.utilities import (
-    get_image_lateral,
-    get_image_animal,
-    get_image_immunohistochemistry,
-)
-"""
-from arch.convert import single_image_conversion
 
 
 @click.command()
 @click.option("--config-file-path", required=False, help="Configuration file path")
 def cmd(config_file_path):
-
+    """
+    the convert click command
+    Args:
+        config-file-path (str): The configuration file path
+    """
     config = configparser.ConfigParser()
     config.sections()
     config.read(config_file_path)
@@ -64,10 +60,6 @@ def cmd(config_file_path):
 
     pixel_size = float(config["BATCH"]["pixel_size"])
 
-    try:
-        qupath_project_path = config["BATCH"]["qpproj_path"]
-    except KeyError:
-        qupath_project_path = None
     output_path = config["BATCH"]["output_directory"]
 
     images_dictionary = list_images(
@@ -77,8 +69,8 @@ def cmd(config_file_path):
         annotations_geojson_suffix,
     )
 
-    for image_prefix, values in images_dictionary.items():
-        print("INFO: Process single image {}".format(image_prefix))
+    for image_prefix in images_dictionary.keys():
+        print(f"INFO: Process single image {image_prefix}")
         single_image_conversion(
             output_path,
             image_prefix,

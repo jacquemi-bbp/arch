@@ -31,7 +31,8 @@ from qupath_processing.io import (
 @click.option(
     "--output-path",
     required=True,
-    help="Directory path that will contain the converted QuPath project's metadata into Dataframes file",
+    help="Directory path that will contain the converted QuPath project's
+     metadata into Dataframes file",
 )
 
 def cmd(
@@ -69,7 +70,8 @@ def cmd(
             project_meta_data[image_name]['Analyze'] = False
 
         try: 
-            project_meta_data[image_name]['Distance to midline'] = meta['metadata']['Distance to midline']
+            project_meta_data[image_name]['Distance to midline'] =
+             meta['metadata']['Distance to midline']
         except KeyError:
             project_meta_data[image_name]['Distance to midline'] = 0
 

@@ -19,7 +19,10 @@ Processing for rat somatosensory cortex QuPath Nissl data
 #
 
 
+import logging
+
 import click
+from arch.app.logger import setup_logging
 from arch.app.convert.batch import cmd as batch_convert
 from arch.version import VERSION
 
@@ -29,7 +32,14 @@ from arch.version import VERSION
 @click.version_option(VERSION)
 def app(verbose=0):
     # pylint: disable=missing-docstring
-    pass
+    setup_logging(
+    {
+        0: logging.WARNING,
+        1: logging.INFO,
+        2: logging.DEBUG,
+    }[min(verbose, 2)]
+)
+
 
 
 app.add_command(name="batch-convert", cmd=batch_convert)
