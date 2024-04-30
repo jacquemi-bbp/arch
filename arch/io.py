@@ -186,7 +186,6 @@ def read_qupath_annotations(directory_path, image_name):
     return s1_pixel_coordinates, quadrilateral_pixel_coordinates, out_of_pia
 
 
-'''
 def get_qpproject_images_metadata(file_path):
     """
     Read file that contains quPath annotations
@@ -197,6 +196,8 @@ def get_qpproject_images_metadata(file_path):
         qpproj_metadata = geojson.load(qpproj_file)
     return qpproj_metadata["images"]
 
+
+'''
 
 def write_dataframe_to_file(dataframe, image_path):
     """

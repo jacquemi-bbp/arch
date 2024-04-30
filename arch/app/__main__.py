@@ -24,6 +24,7 @@ import logging
 import click
 from arch.app.logger import setup_logging
 from arch.app.convert.batch import cmd as batch_convert
+from arch.app.convert.project import cmd as project_convert
 from arch.version import VERSION
 
 
@@ -33,16 +34,16 @@ from arch.version import VERSION
 def app(verbose=0):
     # pylint: disable=missing-docstring
     setup_logging(
-    {
-        0: logging.WARNING,
-        1: logging.INFO,
-        2: logging.DEBUG,
-    }[min(verbose, 2)]
-)
-
+        {
+            0: logging.WARNING,
+            1: logging.INFO,
+            2: logging.DEBUG,
+        }[min(verbose, 2)]
+    )
 
 
 app.add_command(name="batch-convert", cmd=batch_convert)
+app.add_command(name="qupath-project-convert", cmd=project_convert)
 
 if __name__ == "__main__":
     app()
