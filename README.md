@@ -12,7 +12,7 @@ Automated Recognition and Classification of Histological layers.
 Machine learning for histological annotation and quantification of cortical layers pipeline 
 
 ## Main usage
-Automatically detects brain cells, classithem them by brain layer and compute cells density.
+Automatically detects brain cells, classify them by brain layer and compute cells density.
 This pipeline has been used for rat somatosensory cortex Nissl microscopy images, provided by the EPFL LNMC laboratory.
 
 From these images imported in QuPath projects, some QuPath annotations made by experts and metadata in cvs files, this package can generate: 
@@ -30,7 +30,7 @@ From these images imported in QuPath projects, some QuPath annotations made by e
  
 ## The pipeline consists of two main steps:
 1. Within QuPath (Third party application), execute cells detection and export cells features and annotations.
-2. Processing the data exported by QuPath during the previous step, in order to compute the cells density.
+2. Processing the data exported by QuPath during the previous step, in order to compute the layers boundary and the cells density.
  
 ## Lexicon
 The following definitions will stay in effect throughout the code.
@@ -55,28 +55,33 @@ $ pip install .
 ### Python package
 - python third parties libraries are installed during package installation.
 see requirements.txt
-### QuPath
 
-##  Input data
-### Input data for groovy script
-- [cellpose model](cellpose_model/cellpose_residual_on_style_on_concatenation_off_train_2022_01_11_16_14_20)
 
-- QuPath project including the images to process and these 5 annotations: S1HL, top_left, top_right, bottom_left and bottom_right 
-- cellpose model used in Full_QuPath_script.groovy script to detect cells
+##  Pipeline input data
+### Input data to detect cells thanks to QuPAth.
+- We provide the pretrained within this package [cellpose model](cellpose_model/cellpose_residual_on_style_on_concatenation_off_train_2022_01_11_16_14_20)
+- A QuPath project including your images to process and these 5 annotations: SliceCountour, S1HL, top_left, top_right, bottom_left and bottom_right 
+
 
 ### Input data for python single image processing
 - The generated data by the Full_QuPath_script.groovy script
   - detected cells features (csv file)
-  - annotations file (json file)
+  - annotations file (json file) that contains:
     - top_left, top_right, bottom_left and bottom_right annotation points 
     - S1HL polygon annotation
     - outside_pia annotation
 - pixel size :  a float number that represents the pixel size of the QuPath input inages
 
 
-## Export Cells features and QuPath annotations
-- Modify the pathes inside ./Layer Classiffier.json to make it corresponding to your environment.
-- Execute the following groovy script inside the QuPath application or via a script thanks to the QuPath script command:
+## How to export the cells features and the QuPath annotations
+- Edit the qupath_scripts/full_quPath_script.groovy and modify the pathes for the following entries to make them corresponding to your environment:
+ - modelPath
+ - saveFolderPath
+ - CountourFinderPath
+ - LayerClassiferPath
+- Create the saveFolderPath if it is not already exist.
+
+- Execute the following groovy script inside the QuPath application or via a script thanks to the QuPath run command:
 qupath_scripts/full_QuPath_script.groovy
 
 ## Compute the cells densities as a function of percentage of the S1HL depth processing 

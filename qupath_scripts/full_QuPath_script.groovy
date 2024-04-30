@@ -20,8 +20,10 @@ def logger = LoggerFactory.getLogger(this.class);
 
 //def saveFolderPath =  this.args[0]
 //def modelPath =  this.args[1]
-def modelPath =  "/home/jacquemi/working_dir/Rat_sscx_nissl/arch/cellpose_model/cellpose_residual_on_style_on_concatenation_off_train_2022_01_11_16_14_20.764792"
-def saveFolderPath =  "/tmp/test/"
+def modelPath =  "/arch/cellpose_model/cellpose_residual_on_style_on_concatenation_off_train_2022_01_11_16_14_20.764792"
+def saveFolderPath =  "/arch/QuPath_Results"
+def CountourFinderPath = "/arch/qupath_scripts/CountourFinder.json"
+def LayerClassifierPath = "/arch/qupath_scripts/Layer Classiffier.json"
 
 logger.info("cellpose model path: {}", modelPath)
 logger.info("Save folder: {}", saveFolderPath)
@@ -164,7 +166,7 @@ if (entryMetadata['Analyze'] == 'True') {
     runPlugin('qupath.opencv.features.DelaunayClusteringPlugin', '{"distanceThresholdMicrons": 0.0,  "limitByClass": false,  "addClusterMeasurements": false}')
     runPlugin('qupath.lib.plugins.objects.SmoothFeaturesPlugin', '{"fwhmMicrons": 50.0,  "smoothWithinClasses": false}')
     //runObjectClassifier("Layer Classiffier")
-    runObjectClassifier("/home/jacquemi/working_dir/Rat_sscx_nissl/arch/qupath_scripts/Layer Classiffier.json")
+    runObjectClassifier(LayerClassifierPath)
     println 'Add features for classifer and run it Done!'
 
 
@@ -174,7 +176,7 @@ if (entryMetadata['Analyze'] == 'True') {
     setImageType('BRIGHTFIELD_OTHER');
     setColorDeconvolutionStains('{"Name" : "H-DAB default", "Stain 1" : "Hematoxylin", "Values 1" : "0.65111 0.70119 0.29049", "Stain 2" : "DAB", "Values 2" : "0.26917 0.56824 0.77759", "Background" : " 255 255 255"}');
     resetSelection();
-    createAnnotationsFromPixelClassifier("/home/jacquemi/working_dir/Rat_sscx_nissl/arch/qupath_scripts/CountourFinder.json", 1000000.0, 1000000.0)
+    createAnnotationsFromPixelClassifier(CountourFinderPath, 1000000.0, 1000000.0)
     runPlugin('qupath.lib.plugins.objects.SplitAnnotationsPlugin', '{}')
     saveDetectionMeasurements( saveFolder.getAbsolutePath() )
 
