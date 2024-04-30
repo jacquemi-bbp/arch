@@ -28,13 +28,14 @@ import geojson
 # import openpyxl
 
 
-'''
+
 def get_cells_coordinate(dataframe):
     """
     Read file that contains cell positions and create cells centroids x,y position
-    :param dataframe:(Pandas dataframe) containing cells coordinate and metadata (layer, ...)
-    :excluded :(bool) return exluded cells position if set otherwise none excluded cell.
-    :return:
+    Args:
+        dataframe:(Pandas dataframe) containing cells coordinate and metadata (layer, ...)
+        excluded:(bool) return exluded cells position if set otherwise none excluded cell.
+    Returns:
         tuple:
             - cells_centroid_x np.array of shape (number of cells, ) of type float
             - cells_centroid_y np.array of shape (number of cells, ) of type float
@@ -50,7 +51,7 @@ def get_cells_coordinate(dataframe):
     return cells_centroid_x, cells_centroid_y, excluded_cells_centroid_x, excluded_cells_centroid_y
 
 
-'''
+
 
 
 def read_qupath_annotations(directory_path, image_name):
@@ -197,7 +198,7 @@ def get_qpproject_images_metadata(file_path):
     return qpproj_metadata["images"]
 
 
-'''
+
 
 def write_dataframe_to_file(dataframe, image_path):
     """
@@ -209,7 +210,7 @@ def write_dataframe_to_file(dataframe, image_path):
         image_path = image_path.replace('.txt', '.csv')
     dataframe.to_csv(image_path)
 
-'''
+
 
 
 def list_images(

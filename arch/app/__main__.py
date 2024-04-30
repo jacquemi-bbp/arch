@@ -25,6 +25,7 @@ import click
 from arch.app.logger import setup_logging
 from arch.app.convert.batch import cmd as batch_convert
 from arch.app.convert.project import cmd as project_convert
+from arch.app.density.batch import cmd as batch_density
 from arch.version import VERSION
 
 
@@ -42,8 +43,9 @@ def app(verbose=0):
     )
 
 
-app.add_command(name="batch-convert", cmd=batch_convert)
+app.add_command(name="convert", cmd=batch_convert)
 app.add_command(name="qupath-project-convert", cmd=project_convert)
+app.add_command(name="density", cmd=batch_density)
 
 if __name__ == "__main__":
     app()

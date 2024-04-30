@@ -60,7 +60,7 @@ def stereology_exclusion(dataframe):
     return dataframe_with_exclude_flag
 
 
-'''
+
 def concat_dataframe(dest, source=None):
     """
     Concatenate the source dataframe to the dest one
@@ -75,7 +75,7 @@ def concat_dataframe(dest, source=None):
     if source is None:
         return dest
     return pd.concat([dest, source])
-
+'''
 
 def get_angle(p1, p2) -> float:
     """
@@ -162,8 +162,16 @@ def get_specific_metadata(images_metadata, meta_name, default=np.nan):
 
  
 
-
+'''
 def  get_image_to_exlude_list(df_image_to_exclude):
+    """
+    Get the list of exclude image from the input dataframe
+    Args:
+        df_image_to_exclude(pandas.Dataframe)
+    Returns:
+        list of images name (str) to exclude
+    """
+
     df_image_to_exclude=df_image_to_exclude.dropna().reset_index(drop=True)
     # Step 2: Apply a function to each value
     def remove_space(image_name):
@@ -173,4 +181,4 @@ def  get_image_to_exlude_list(df_image_to_exclude):
     # Step 3: Assign the new values back to the column
     df_image_to_exclude['Image ID to exclude'] = new_image_name_column
     return list(df_image_to_exclude['Image ID to exclude'])
-'''
+

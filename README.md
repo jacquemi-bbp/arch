@@ -112,14 +112,14 @@ qupath_scripts/full_QuPath_script.groovy
 
 - execute the following python script
 ```shell
-$ pyqupath_processing convert --config-file-path ./Config/batch_converty.ini
+$ pyarch convert --config-file-path ./Config/batch_converty.ini
 ```
 
 # How to compute the densities of several images in batch
 - modify ./Config/linux/batch_density.ini with your configuration
 - execute the python script
 ```shell
-$ pyqupath_processing density --config-file-path ./Config/linux/batch_density.ini
+$ pyarch density --config-file-path ./Config/linux/batch_density.ini
 ```
 
 ## Compute the cells density per layers
