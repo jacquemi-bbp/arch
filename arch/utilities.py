@@ -1,6 +1,7 @@
 """
 Utilities module
 """
+
 # Copyright (C) 2021  Blue Brain Project, EPFL
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,6 +23,7 @@ import math
 import random
 from sklearn.neighbors import NearestNeighbors
 
+
 class NotValidImage(Exception):
     pass
 
@@ -38,18 +40,26 @@ def stereology_exclusion(dataframe):
         The input dataframe wityh the new exlude column
     """
 
-    data = dataframe[["Centroid X µm","Centroid Y µm"]].values
-    nbrs = NearestNeighbors(n_neighbors=5,algorithm="kd_tree").fit(data)
-    dataframe['mean_diameter'] = 0.5*(dataframe["Max diameter µm"] + dataframe["Min diameter µm"])
+    data = dataframe[["Centroid X µm", "Centroid Y µm"]].values
+    nbrs = NearestNeighbors(n_neighbors=5, algorithm="kd_tree").fit(data)
+    dataframe["mean_diameter"] = 0.5 * (
+        dataframe["Max diameter µm"] + dataframe["Min diameter µm"]
+    )
 
-    def exclude(sample, slice_thickness = 50):
-        sample['neighbors'] = nbrs.kneighbors(data,6,return_distance=False)[sample.name,:] #sample.name = row index
-        neighbor_mean = dataframe.iloc[sample['neighbors']]['mean_diameter'].mean()
-        sample['neighbor_mean'] = neighbor_mean
-        sample['exclude_for_density'] = random.uniform(0,slice_thickness) + neighbor_mean/2 >= slice_thickness
+    def exclude(sample, slice_thickness=50):
+        sample["neighbors"] = nbrs.kneighbors(data, 6, return_distance=False)[
+            sample.name, :
+        ]  # sample.name = row index
+        neighbor_mean = dataframe.iloc[sample["neighbors"]]["mean_diameter"].mean()
+        sample["neighbor_mean"] = neighbor_mean
+        sample["exclude_for_density"] = (
+            random.uniform(0, slice_thickness) + neighbor_mean / 2 >= slice_thickness
+        )
         return sample
-    dataframe_with_exclude_flag = dataframe.apply(exclude,axis=1)
+
+    dataframe_with_exclude_flag = dataframe.apply(exclude, axis=1)
     return dataframe_with_exclude_flag
+
 
 '''
 def concat_dataframe(dest, source=None):
@@ -165,4 +175,3 @@ def  get_image_to_exlude_list(df_image_to_exclude):
     df_image_to_exclude['Image ID to exclude'] = new_image_name_column
     return list(df_image_to_exclude['Image ID to exclude'])
 '''
-

@@ -1,6 +1,7 @@
 """
 Read / Write files modules
 """
+
 # Copyright (C) 2021  Blue Brain Project, EPFL
 #
 # This program is free software: you can redistribute it and/or modify
@@ -50,13 +51,15 @@ def get_cells_coordinate(dataframe):
 
 
 '''
+
+
 def read_qupath_annotations(directory_path, image_name):
     """
     Read file that contains quPath annotations
     Args:
         directory_path (str):
         image_name(str):
-    
+
     Returns:
         tuple:
             - s1_coordinates: np.array(float) of shape (nb_vertices, 2) containing S1HL polygon
@@ -66,7 +69,7 @@ def read_qupath_annotations(directory_path, image_name):
     Notes: The returned coordinates unit is pixel. One needs to multiply coordinate values by the
      pixel size to obtain um as unit
     """
-    file_path = directory_path + '/' + image_name + '_annotations.json'
+    file_path = directory_path + "/" + image_name + "_annotations.json"
     with open(file_path, "rb") as annotation_file:
         annotations_geo = geojson.load(annotation_file)
     annotations = {}
@@ -91,11 +94,11 @@ def read_qupath_annotations(directory_path, image_name):
                             annotations[key] = np.array(value)
                         except ValueError:
                             """
-                            Because of miss created annotation by user, some QuPath annotation type 
+                            Because of miss created annotation by user, some QuPath annotation type
                             are not simple polygon, but ROI (composition of several polygons.
                             In this case, we get the bigger polygon and do noy used the other
 
-                            Because of miss created annotation by user, some QuPath annotation type 
+                            Because of miss created annotation by user, some QuPath annotation type
                             are not simple polygon, but ROI (composition of several polygons.
                             In this case, we get the bigger polygon and do noy used the other
 
@@ -105,9 +108,9 @@ def read_qupath_annotations(directory_path, image_name):
                             if len(value[0]) == 1 and len(value[1]) == 1:
                                 """
                                 --
-                                | | 
+                                | |
 
-                                
+
                                 -------
                                 |   |
                                 |   |
@@ -115,16 +118,16 @@ def read_qupath_annotations(directory_path, image_name):
                                 """
                                 max_len = 0
                                 for i, entry in enumerate(value):
-        
+
                                     if len(entry) > max_len:
                                         max_len = len(entry)
-                                        print(f'max_len = {max_len}')
+                                        print(f"max_len = {max_len}")
                                         bigger_array = np.array(entry)
                                 annotations[key] = bigger_array
                             else:
                                 """
                                     ---
-                                    | | 
+                                    | |
                                 -------
                                 |   |
                                 |   |
@@ -193,6 +196,7 @@ def read_qupath_annotations(directory_path, image_name):
             raise e
     return s1_pixel_coordinates, quadrilateral_pixel_coordinates, out_of_pia
 
+
 '''
 def get_qpproject_images_metadata(file_path):
     """
@@ -216,8 +220,14 @@ def write_dataframe_to_file(dataframe, image_path):
     dataframe.to_csv(image_path)
 
 '''
-def list_images(cell_features_path=None, cell_features_suffix=None, 
-                annotation_path=None, annotations_geojson_suffix=None):
+
+
+def list_images(
+    cell_features_path=None,
+    cell_features_suffix=None,
+    annotation_path=None,
+    annotations_geojson_suffix=None,
+):
     """
     Generate of dictionary of directory that contains the cell_feature and annotation pathes for each images
 
@@ -229,40 +239,38 @@ def list_images(cell_features_path=None, cell_features_suffix=None,
     Returns:
         dictionary of dictionary: key image prefix -> dictionary of files CELL_POSITIONS_PATH and ANNOTATIONS_PATH
     """
-    
-    cells_file_list= []
-    if cell_features_path:
-        cells_file_list = glob.glob(cell_features_path + '/*' + cell_features_suffix)
 
-    annotation_file_list=[]
+    cells_file_list = []
+    if cell_features_path:
+        cells_file_list = glob.glob(cell_features_path + "/*" + cell_features_suffix)
+
+    annotation_file_list = []
     if annotation_path:
-        annotation_file_list = glob.glob(annotation_path + '/*' + annotations_geojson_suffix)
- 
+        annotation_file_list = glob.glob(
+            annotation_path + "/*" + annotations_geojson_suffix
+        )
+
     image_dictionary = defaultdict(dict)
 
     for cell_feature_filename in cells_file_list:
-        prefix_pos = (
-            cell_feature_filename.find(cell_features_suffix) - 1
-        )
+        prefix_pos = cell_feature_filename.find(cell_features_suffix) - 1
         if prefix_pos != -1:
-            slash_pos = cell_feature_filename.rfind('/')
-            image_name = cell_feature_filename[slash_pos+1:prefix_pos]
+            slash_pos = cell_feature_filename.rfind("/")
+            image_name = cell_feature_filename[slash_pos + 1 : prefix_pos]
             image_dictionary[image_name]["CELL_POSITIONS_PATH"] = cell_feature_filename
 
-
     for annotation_filename in annotation_file_list:
-        print(f'annotation_filename {annotation_filename}')
-        prefix_pos = (
-                annotation_filename.find(annotations_geojson_suffix) - 1
-            )
-        print(f'prefix_pos {prefix_pos}')
+        print(f"annotation_filename {annotation_filename}")
+        prefix_pos = annotation_filename.find(annotations_geojson_suffix) - 1
+        print(f"prefix_pos {prefix_pos}")
         if prefix_pos != -1:
-            slash_pos = annotation_filename.rfind('/')
-            image_name = annotation_filename[slash_pos+1:prefix_pos+1]
-            print(f'image_name {image_name}')
+            slash_pos = annotation_filename.rfind("/")
+            image_name = annotation_filename[slash_pos + 1 : prefix_pos + 1]
+            print(f"image_name {image_name}")
             image_dictionary[image_name]["ANNOTATIONS_PATH"] = annotation_filename
 
     return image_dictionary
+
 
 '''
 def get_top_line_coordinates(annotation_position_file_path):

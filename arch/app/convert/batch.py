@@ -17,12 +17,13 @@ import configparser
 import click
 
 from arch.io import (
-    #write_dataframe_to_file,
+    # write_dataframe_to_file,
     list_images,
-    #get_qpproject_images_metadata,
-    #save_dataframe_without_space_in_path,
+    # get_qpproject_images_metadata,
+    # save_dataframe_without_space_in_path,
 )
-'''
+
+"""
 from arch.convert import (
     convert,
 )
@@ -31,7 +32,7 @@ from arch.utilities import (
     get_image_animal,
     get_image_immunohistochemistry,
 )
-'''
+"""
 from arch.convert import single_image_conversion
 
 
@@ -57,10 +58,9 @@ def cmd(config_file_path):
         annotations_geojson_suffix = None
 
     try:
-        exclude_flag = config.getboolean('BATCH', 'exclude')
+        exclude_flag = config.getboolean("BATCH", "exclude")
     except configparser.NoOptionError:
         exclude_flag = True
-
 
     pixel_size = float(config["BATCH"]["pixel_size"])
 
@@ -71,12 +71,19 @@ def cmd(config_file_path):
     output_path = config["BATCH"]["output_directory"]
 
     images_dictionary = list_images(
-        input_detection_directory, cell_position_suffix, 
-        input_annotation_directory, annotations_geojson_suffix
+        input_detection_directory,
+        cell_position_suffix,
+        input_annotation_directory,
+        annotations_geojson_suffix,
     )
 
     for image_prefix, values in images_dictionary.items():
         print("INFO: Process single image {}".format(image_prefix))
-        single_image_conversion(output_path, image_prefix,
-                                input_detection_directory, input_annotation_directory,
-                                pixel_size, exclude = exclude_flag)
+        single_image_conversion(
+            output_path,
+            image_prefix,
+            input_detection_directory,
+            input_annotation_directory,
+            pixel_size,
+            exclude=exclude_flag,
+        )

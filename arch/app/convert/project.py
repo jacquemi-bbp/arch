@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-'''
+"""
 import click
 import os
 import pandas as pd 
@@ -88,4 +88,4 @@ def cmd(
     meta_df = meta_df.reset_index(drop=True)
     meta_df.to_csv(meta_path)
     
-'''
+"""
