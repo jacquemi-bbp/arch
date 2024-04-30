@@ -75,26 +75,25 @@ see requirements.txt
 
 ## How to export the cells features and the QuPath annotations
 - Edit the qupath_scripts/full_quPath_script.groovy and modify the pathes for the following entries to make them corresponding to your environment:
- - modelPath
- - saveFolderPath
- - CountourFinderPath
- - LayerClassiferPath
+  - modelPath
+  - saveFolderPath
+  - CountourFinderPath
+  - LayerClassiferPath
 - Create the saveFolderPath if it is not already exist.
 
-- Execute the following groovy script inside the QuPath application or via a script thanks to the QuPath run command:
+- Execute the following groovy script inside the QuPath application or via a script thanks to the QuPath script command:
 qupath_scripts/full_QuPath_script.groovy
 
-## Compute the cells densities as a function of percentage of the S1HL depth processing 
-- Read input data from QuPath exported files
-- Convert annotations to cartesian point coordinates and shapely polygon.
+## Steps to compute the cells densities as a function of percentage of the S1HL depth processing 
+- Read input data from QuPath exported files abd convert them to cartesian point coordinates and shapely polygon.
 - Split the S1HL polygon following the S1HL "top and bottom lines" shapes in n polygons (named spitted_polygon)
 - Count the number of cells located in each spitted_polygon
 - Compute the volume of each spitted_polygon (mm3)
 - Compute the cells densities as function of the percentage of the sscx depth
 - Export result files
 
-## Compute the densities per S1HL layers
-- Read input data from QuPath exported files
+## Steps to compute the densities per S1HL layers
+- Read input data from QuPath exported files and convert them to cartesian point coordinates and shapely polygon.
 - Train a ML model from GroundTruth data produced by some experts
 - Use the ML model to predict and affect a layer for each detected cell
 - Define a polygon (alphashape) for each layer based on ML prediction
@@ -103,14 +102,20 @@ qupath_scripts/full_QuPath_script.groovy
 - Compute the cells densities for each layer
 - Export result files
 - 
-## Compute the densities of one image
-- modify ./Config/linux/depth.ini with your configuration
-- execute the python script
+
+# How to convert the QuPath results to pandas dataframes in batch
+- modify the following entries ./Config/batch_convert.ini with your configuration
+  - input_detection_directory
+  - input_annotation_directory
+  - output_directory
+  - pixel_size
+
+- execute the following python script
 ```shell
-$ pyqupath_processing density --config-file-path ./Config/linux/density.ini
+$ pyqupath_processing convert --config-file-path ./Config/batch_converty.ini
 ```
 
-# Compute the densities of several images in batch
+# How to compute the densities of several images in batch
 - modify ./Config/linux/batch_density.ini with your configuration
 - execute the python script
 ```shell

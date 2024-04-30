@@ -26,6 +26,6 @@ setup(
     packages=find_packages(),
     name='arch',
     entry_points={
-        'console_scripts': ['arch_processing=arch.app.__main__:app'  ]
+        'console_scripts': ['pyarch=arch.app.__main__:app'  ]
     }
 )
