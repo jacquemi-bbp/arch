@@ -1,6 +1,7 @@
 """
 Geometry module that contains geometric functions
 """
+
 # Copyright (C) 2021  Blue Brain Project, EPFL
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,24 +17,23 @@ Geometry module that contains geometric functions
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import math
 from math import sqrt
 import numpy as np
 
-from scipy.spatial import Delaunay
-from shapely.geometry import Point, LineString, Polygon, MultiLineString, shape
-from shapely.ops import split, unary_union, polygonize
+from shapely.geometry import Point, LineString, Polygon, MultiLineString
+from shapely.ops import split
 from shapely.geometry.multipolygon import MultiPolygon
 from shapely import geometry
-
 
 
 def distance(pt1, pt2):
     """
     Return the euclidian distance from two 2D points
-    :param pt1:  np.array of shape (2,): X,Y coordinates
-    :param pt2:  np.array of shape (2,): X,Y coordinates
-    :return:  float : The euclidian distance  form p1 to p2
+    Args:
+        pt1:(np.array) of shape (2,): X,Y coordinates
+        pt2:(np.array) of shape (2,): X,Y coordinates
+    Returns:
+          float : The euclidian distance  form p1 to p2
 
     """
     return sqrt((pt1[0] - pt2[0]) ** 2 + (pt1[1] - pt2[1]) ** 2)
@@ -42,10 +42,12 @@ def distance(pt1, pt2):
 def get_extrapoled_segement(segment_endpoints_coordinates, extrapol_ratio=1.5):
     """
     Extrapolates a segment in both directions of extrapol_ratio ratio
-    :param segment_endpoints_coordinates:(np.array) of shape(2, 2): coordinates of the segment's
-     endpoints
-    :param extrapol_ratio: Ratio used to extrapolate the segment endpoints coordianates
-    :return: (np.array) of shape(2, 2) the extrapolated segment's endpoints
+    Args:
+        segment_endpoints_coordinates: (np.array) of shape(2, 2): coordinates of the segment's
+        endpoints
+        extrapol_ratio:(float) Ratio used to extrapolate the segment endpoints coordianates
+    Returns:
+         (np.array) of shape(2, 2) the extrapolated segment's endpoints
     """
     pt1 = segment_endpoints_coordinates[0]
     pt2 = segment_endpoints_coordinates[1]
@@ -60,7 +62,9 @@ def get_extrapoled_segement(segment_endpoints_coordinates, extrapol_ratio=1.5):
     return np.array([new_pt1, new_pt2])
 
 
-def create_grid(top_left, top_right, bottom_left, bottom_right, s1_coordinates, nb_row, nb_col):
+def create_grid(
+    top_left, top_right, bottom_left, bottom_right, s1_coordinates, nb_row, nb_col
+):
     """
     Create a grid on a polygon defined by s1_coordinates.
     - The vertical lines are straight. There endpoints coordinates are computed from the
@@ -70,35 +74,42 @@ def create_grid(top_left, top_right, bottom_left, bottom_right, s1_coordinates, 
          top and bottom
      lines shape to represent the brain's depth
 
-    :param points_annotations:(np.array) of shape(5, 2) containing the following points coordinates(mm)
+    Args:
+        points_annotations:(np.array) of shape(5, 2) containing the following points coordinates(mm)
                         direction:top_left, top_right, bottom_right, bottom_left, top_left
-    :param s1_coordinates:(np.array) shape (nb_vertices, 2) containing S1 polygon coordinates (mm)
-    :param nb_row:(int) grid number of rows
-    :param nb_col:(int) grid number of columns
-    :return: tuple:
+        s1_coordinates:(np.array) shape (nb_vertices, 2) containing S1 polygon coordinates (mm)
+        nb_row:(int) grid number of rows
+        nb_col:(int) grid number of columns
+    Returns:
+         tuple:
         - list of horizontal LineString that defined the grid
 
     """
-    vertical_lines = vertical_line_splitter(top_left, top_right, bottom_left, bottom_right,
-                                            s1_coordinates, nb_col)
+    vertical_lines = vertical_line_splitter(
+        top_left, top_right, bottom_left, bottom_right, s1_coordinates, nb_col
+    )
     return horizontal_line_splitter(vertical_lines, nb_row), vertical_lines
 
 
-def vertical_line_splitter(top_left, top_right,bottom_left, bottom_right, s1_coordinates, nb_col):
+def vertical_line_splitter(
+    top_left, top_right, bottom_left, bottom_right, s1_coordinates, nb_col
+):
     """
     Create some vertical lined on a polygon defined by s1_coordinates.
     - The vertical lines are straight. There endpoints coordinates are computed from the
      quadrilateral top and bottom
      lines in order to split them in a regular way.
 
-    :param points_annotations_dataframe:(pandas dataframe containing the following points coordinates(mm)
+    Args:
+        points_annotations_dataframe:(dataframe) containing the following points coordinates (mm)
                         in clockwise direction: top_left, top_right, bottom_right, bottom_left,
                         top_left
-    :param s1_coordinates:(np.array) of shape (nb_vertices, 2) containing S1 polygon coordinates
+        s1_coordinates:(np.array) of shape (nb_vertices, 2) containing S1 polygon coordinates
                           (mm)
-    :param nb_col:(int) number of columns
+        nb_col:(int) number of columns
 
-    :return  list of vertical LineString
+    Returns:
+          list of vertical LineString
     """
     # Vertical lines
 
@@ -144,9 +155,11 @@ def horizontal_line_splitter(vertical_lines, nb_row):
           top and bottom
      lines shape to represent the brain's depth
 
-    :param vertical_lines: list of vertical LineString that defined the grid
-    :param nb_row:(int) grid number of rows
-    :return list of horizontal LineString
+    Args:
+        vertical_lines:(list) list of vertical LineString that defined the grid
+        nb_row:(int) grid number of rows
+    Returns:
+         list of horizontal LineString
     """
     horizontal_lines = []
     for i in range(nb_row - 1):
@@ -167,10 +180,12 @@ def create_depth_polygons(s1_coordinates, horizontal_lines):
     """
     Create shapely polygon defined by horizontal lines and the polygon defined
      by s1_coordinates
-    :param s1_coordinates:(np.array) of shape (nb_vertices, 2) containing
+     Args:
+        s1_coordinates:(np.array) of shape (nb_vertices, 2) containing
                           S1 polygon coordinates (mm)
-    :param horizontal_lines: list of horizontal LineString that defined the grid
-    :return: list of shapely polygons representing S1 layers as fonction
+        horizontal_lines: list of horizontal LineString that defined the grid
+    Returns:
+         list of shapely polygons representing S1 layers as fonction
              if brain depth
     """
     # try:
@@ -191,12 +206,14 @@ def create_depth_polygons(s1_coordinates, horizontal_lines):
 def count_nb_cell_per_polygon(cells_centroid_x, cells_centroid_y, split_polygons):
     """
     Count the number of cells located inside each polygon of split_polygons list
-    :param cells_centroid_x:np.array of shape (number of cells, ) of type float
-    :param cells_centroid_y:np.array of shape (number of cells, ) of type float
-    :param split_polygons:list of shapely polygons representing S1 layers as
+    Args:
+        cells_centroid_x:np.array of shape (number of cells, ) of type float
+        cells_centroid_y:np.array of shape (number of cells, ) of type float
+        split_polygons:list of shapely polygons representing S1 layers as
                           function if brain depth
-    :return: list of int:The number of cells located inside each polygons of
-                         split_polygons
+    Returns:
+         list of int:The number of cells located inside each polygons of
+         split_polygons
     """
     nb_cell_per_polygon = [0] * len(split_polygons)
     for x_coord, y_coord in zip(cells_centroid_x, cells_centroid_y):
@@ -206,24 +223,36 @@ def count_nb_cell_per_polygon(cells_centroid_x, cells_centroid_y, split_polygons
     return nb_cell_per_polygon
 
 
-def compute_cells_depth(split_polygons, cells_centroid_x, cells_centroid_y):
+def compute_cells_polygon_level(split_polygons, cells_centroid_x, cells_centroid_y):
     """
-    Plot polygons and cells depth
-    :param split_polygons: list of shapely polygons representing S1 layers as
+    Compute cells polygon level
+    Args:
+        split_polygons:(list) list of shapely polygons representing S1 layers as
                            function if brain depth
-    :param cells_centroid_x: np.array of shape (number of cells, ) of type float
-    :param cells_centroid_y: np.array of shape (number of cells, ) of type float
+        cells_centroid_x:(np.array) of shape (number of cells, ) of type float
+        cells_centroid_y:(np.array) of shape (number of cells, ) of type float
+    Returns:
+        list of float that represent the polygon level for each cell
+
     """
-    depthes = [-1] * len(cells_centroid_x)
+    levels = [-1] * len(cells_centroid_x)
     for cell_index, (x_coord, y_coord) in enumerate(
         zip(cells_centroid_x, cells_centroid_y)
     ):
         for index, polygon in enumerate(split_polygons):
             if polygon.contains(Point([x_coord, y_coord])):
-                depthes[cell_index] = index
-    return depthes
+                levels[cell_index] = index
+    return levels
+
 
 def get_bigger_polygon(multipolygon: MultiPolygon) -> Polygon:
+    """
+    returns the bigger polygon within a MultiPolygon
+    Args:
+        multipolygon:(MultiPolygon)
+    Returns:
+        Polygon: the bigger polygon
+    """
     polygon = None
     for poly in multipolygon.geoms:
         if polygon is None:
@@ -234,10 +263,18 @@ def get_bigger_polygon(multipolygon: MultiPolygon) -> Polygon:
     return polygon
 
 
-def get_inside_points(polygon: Polygon , points: np.array) -> np.array:
+def get_inside_points(polygon: Polygon, points: np.array) -> np.array:
+    """
+    returns an array of points located inside a polygon
+    Args:
+        polygon:(Polygon)
+        points:(np.array)
+    Returns:
+        a np.array of points that are located inside the polygon
+    """
     inside_points = []
     for point in points:
-        shapely_point = geometry.Point([point[0],point[1]])
+        shapely_point = geometry.Point([point[0], point[1]])
         if polygon.contains(shapely_point):
             inside_points.append(point)
     return np.array(inside_points)

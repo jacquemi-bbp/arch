@@ -51,19 +51,19 @@ $ cd arch
 $ pip install .
 ```
 
-## Third parties 
-### Python package
+### Third parties 
+#### Python package
 - python third parties libraries are installed during package installation.
 see requirements.txt
 
 
 ##  Pipeline input data
-### Input data to detect cells thanks to QuPAth.
+### Input data used during the cells detection thanks to QuPAth.
 - We provide the pretrained within this package [cellpose model](cellpose_model/cellpose_residual_on_style_on_concatenation_off_train_2022_01_11_16_14_20)
 - A QuPath project including your images to process and these 5 annotations: SliceCountour, S1HL, top_left, top_right, bottom_left and bottom_right 
 
 
-### Input data for python single image processing
+### Input data used to compute the cell sdensity.
 - The generated data by the Full_QuPath_script.groovy script
   - detected cells features (csv file)
   - annotations file (json file) that contains:
@@ -72,18 +72,7 @@ see requirements.txt
     - outside_pia annotation
 - pixel size :  a float number that represents the pixel size of the QuPath input inages
 
-
-## How to export the cells features and the QuPath annotations
-- Edit the qupath_scripts/full_quPath_script.groovy and modify the pathes for the following entries to make them corresponding to your environment:
-  - modelPath
-  - saveFolderPath
-  - CountourFinderPath
-  - LayerClassiferPath
-- Create the saveFolderPath if it is not already exist.
-
-- Execute the following groovy script inside the QuPath application or via a script thanks to the QuPath script command:
-qupath_scripts/full_QuPath_script.groovy
-
+# Pipeline
 ## Steps to compute the cells densities as a function of percentage of the S1HL depth processing 
 - Read input data from QuPath exported files abd convert them to cartesian point coordinates and shapely polygon.
 - Split the S1HL polygon following the S1HL "top and bottom lines" shapes in n polygons (named spitted_polygon)
@@ -101,9 +90,22 @@ qupath_scripts/full_QuPath_script.groovy
 - Compute the volume of each layer polygon (mm3)
 - Compute the cells densities for each layer
 - Export result files
-- 
 
-# How to convert the QuPath results to pandas dataframes in batch
+
+## How To
+
+1. Detect cells and export their features and the QuPath annotations
+- Edit the qupath_scripts/full_quPath_script.groovy and modify the pathes for the following entries to make them corresponding to your environment:
+  - modelPath
+  - saveFolderPath
+  - CountourFinderPath
+  - LayerClassiferPath
+- Create the saveFolderPath if it is not already exist.
+
+- Execute the following groovy script inside the QuPath application or via a script thanks to the QuPath script command:
+qupath_scripts/full_QuPath_script.groovy
+
+2. Convert the QuPath results to pandas dataframes in batch
 - modify the following entries ./Config/batch_convert.ini with your configuration
   - input_detection_directory
   - input_annotation_directory
@@ -115,14 +117,19 @@ qupath_scripts/full_QuPath_script.groovy
 $ pyarch convert --config-file-path ./Config/batch_converty.ini
 ```
 
-# How to compute the densities of several images in batch
+3. Compute the  cell densities  as function of brain depth
 - modify ./Config/linux/batch_density.ini with your configuration
-- execute the python script
+- execute the following python script
 ```shell
-$ pyarch density --config-file-path ./Config/linux/batch_density.ini
+$  pyarch density-per-depth --config-file-path ./Config/batch_density.ini
+```
+4. Compute the  cell densities  by layer 
+- modify ./Config/linux/batch_density.ini with your configuration
+- execute the following python script
+```shell
+$  pyarch density-per-layer --config-file-path ./Config/batch_density.ini
 ```
 
-## Compute the cells density per layers
 
 
 ## Funding & Acknowledgment

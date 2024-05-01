@@ -28,7 +28,6 @@ import geojson
 # import openpyxl
 
 
-
 def get_cells_coordinate(dataframe):
     """
     Read file that contains cell positions and create cells centroids x,y position
@@ -41,17 +40,23 @@ def get_cells_coordinate(dataframe):
             - cells_centroid_y np.array of shape (number of cells, ) of type float
     """
 
-    valid_cells_dataframe = dataframe[dataframe['exclude_for_density']==False]
+    valid_cells_dataframe = dataframe[dataframe["exclude_for_density"] == False]
     cells_centroid_x = valid_cells_dataframe["Centroid X µm"].to_numpy(dtype=float)
     cells_centroid_y = valid_cells_dataframe["Centroid Y µm"].to_numpy(dtype=float)
 
-    exluded_cells_dataframe = dataframe[dataframe['exclude_for_density'] == True]
-    excluded_cells_centroid_x = exluded_cells_dataframe["Centroid X µm"].to_numpy(dtype=float)
-    excluded_cells_centroid_y = exluded_cells_dataframe["Centroid Y µm"].to_numpy(dtype=float)
-    return cells_centroid_x, cells_centroid_y, excluded_cells_centroid_x, excluded_cells_centroid_y
-
-
-
+    exluded_cells_dataframe = dataframe[dataframe["exclude_for_density"] == True]
+    excluded_cells_centroid_x = exluded_cells_dataframe["Centroid X µm"].to_numpy(
+        dtype=float
+    )
+    excluded_cells_centroid_y = exluded_cells_dataframe["Centroid Y µm"].to_numpy(
+        dtype=float
+    )
+    return (
+        cells_centroid_x,
+        cells_centroid_y,
+        excluded_cells_centroid_x,
+        excluded_cells_centroid_y,
+    )
 
 
 def read_qupath_annotations(directory_path, image_name):
@@ -94,29 +99,23 @@ def read_qupath_annotations(directory_path, image_name):
                             value = entry["geometry"]["coordinates"]
                             annotations[key] = np.array(value)
                         except ValueError:
-                            """
-                            Because of miss created annotation by user, some QuPath annotation type
-                            are not simple polygon, but ROI (composition of several polygons.
-                            In this case, we get the bigger polygon and do noy used the other
 
-                            Because of miss created annotation by user, some QuPath annotation type
-                            are not simple polygon, but ROI (composition of several polygons.
-                            In this case, we get the bigger polygon and do noy used the other
+                            #Because of miss created annotation by user, some QuPath annotation type
+                            #are not simple polygon, but ROI (composition of several polygons.
+                            #In this case, we get the bigger polygon and do noy used the other
+                            #Because of miss created annotation by user, some QuPath annotation type
+                            #are not simple polygon, but ROI (composition of several polygons.
+                            #In this case, we get the bigger polygon and do noy used the other
 
-
-
-                            """
                             if len(value[0]) == 1 and len(value[1]) == 1:
-                                """
-                                --
-                                | |
 
+                            #    --
+                            #    | |
 
-                                -------
-                                |   |
-                                |   |
-                                -----
-                                """
+                            #    -------
+                            #    |   |
+                            #    |   |
+                            #    -----
                                 max_len = 0
                                 for entry in value:
 
@@ -126,14 +125,12 @@ def read_qupath_annotations(directory_path, image_name):
                                         bigger_array = np.array(entry)
                                 annotations[key] = bigger_array
                             else:
-                                """
-                                    ---
-                                    | |
-                                -------
-                                |   |
-                                |   |
-                                -----
-                                """
+                            #        ---
+                            #        | |
+                            #    -------
+                            #    |   |
+                            #    |   |
+                            #    -----
                                 if len(value[0]) > len(value[1]):
                                     annotations[key] = np.array([value[0]])
                                 else:
@@ -198,19 +195,15 @@ def get_qpproject_images_metadata(file_path):
     return qpproj_metadata["images"]
 
 
-
-
 def write_dataframe_to_file(dataframe, image_path):
     """
     export and save result to xlsx file
     :param dataframe (pandas Dataframe):
     :param output_path(str):
     """
-    if image_path.find('.txt'):
-        image_path = image_path.replace('.txt', '.csv')
+    if image_path.find(".txt"):
+        image_path = image_path.replace(".txt", ".csv")
     dataframe.to_csv(image_path)
-
-
 
 
 def list_images(
@@ -255,53 +248,10 @@ def list_images(
             image_dictionary[image_name]["CELL_POSITIONS_PATH"] = cell_feature_filename
 
     for annotation_filename in annotation_file_list:
-        print(f"annotation_filename {annotation_filename}")
         prefix_pos = annotation_filename.find(annotations_geojson_suffix) - 1
-        print(f"prefix_pos {prefix_pos}")
         if prefix_pos != -1:
             slash_pos = annotation_filename.rfind("/")
             image_name = annotation_filename[slash_pos + 1 : prefix_pos + 1]
-            print(f"image_name {image_name}")
             image_dictionary[image_name]["ANNOTATIONS_PATH"] = annotation_filename
 
     return image_dictionary
-
-
-'''
-def get_top_line_coordinates(annotation_position_file_path):
-    """
-    Read TOP_LEFT and TOP_RIGHT point from file located at annotation_position_file_path
-    :param annotation_position_file_path: (str)
-    :return: np.array of shape (2,2) containing top left and right points
-    """
-    df_annotation = qupath_cells_detection_to_dataframe(annotation_position_file_path)
-    position = {}
-    for point_str in ["TOP_LEFT", "TOP_RIGHT", "BOTTOM_RIGHT", "BOTTOM_FEFT"]:
-        annotation = df_annotation[df_annotation["Name"] == point_str]
-        position[point_str] = [
-            annotation["Centroid X µm"].to_numpy(dtype=float),
-            annotation["Centroid Y µm"].to_numpy(dtype=float),
-        ]
-    top_left = position["TOP_LEFT"]
-    top_right = position["TOP_RIGHT"]
-    return np.array(top_left), np.array(top_right)
-
-
-def create_directory_if_not_exist(directory_path):
-    """
-    Check if directory exists, if not, create it
-    :param directory_path
-    """
-    check_folder = isdir(directory_path)
-    # If folder doesn't exist, then create it.
-    if not check_folder:
-        makedirs(directory_path)
-        print("created folder : ", directory_path)
-
-
-def save_dataframe_without_space_in_path(dataframe, path):
-    path = path.replace(" ", "")
-    dataframe.to_csv(path)
-
-
-'''

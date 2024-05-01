@@ -25,7 +25,8 @@ import click
 from arch.app.logger import setup_logging
 from arch.app.convert.batch import cmd as batch_convert
 from arch.app.convert.project import cmd as project_convert
-from arch.app.density.batch import cmd as batch_density
+from arch.app.density.batch import cmd_layer as batch_density_layer
+from arch.app.density.batch import cmd_depth as batch_density_depth
 from arch.version import VERSION
 
 
@@ -45,7 +46,8 @@ def app(verbose=0):
 
 app.add_command(name="convert", cmd=batch_convert)
 app.add_command(name="qupath-project-convert", cmd=project_convert)
-app.add_command(name="density", cmd=batch_density)
+app.add_command(name="density-per-layer", cmd=batch_density_layer)
+app.add_command(name="density-per-depth", cmd=batch_density_depth)
 
 if __name__ == "__main__":
     app()
