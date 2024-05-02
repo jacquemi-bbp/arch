@@ -41,7 +41,7 @@ def cmd(
     qupath_project_path,
 ):
     """
-    click convert QuPath project for metadata command
+    Convert QuPath project metadata top pandfas dataframe
     """
 
     os.makedirs(output_path, exist_ok=True)

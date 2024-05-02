@@ -43,7 +43,7 @@ def cmd_depth(
     image_to_exlude_path,
 ):
     """
-    The batch density per depth click command
+    Compute cell densities as function of brain depth 
     """
     config = configparser.ConfigParser()
     config.sections()
@@ -109,7 +109,7 @@ def cmd_layer(
     image_to_exlude_path,
 ):
     """
-    The batch density per layer click command
+    Compute cell densities per brain layer 
     """
     config = configparser.ConfigParser()
     config.sections()

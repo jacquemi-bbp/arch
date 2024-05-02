@@ -32,7 +32,7 @@ from arch.io import (
 @click.option("--config-file-path", required=False, help="Configuration file path")
 def cmd(config_file_path):
     """
-    the convert click command
+    Convert QuPath output files to pandas dataframes
     Args:
         config-file-path (str): The configuration file path
     """

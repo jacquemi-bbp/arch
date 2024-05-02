@@ -117,6 +117,13 @@ qupath_scripts/full_QuPath_script.groovy
 $ pyarch convert --config-file-path ./Config/batch_converty.ini
 ```
 
+2.1. Convert the QuPath project metadata to a pandas dataframe
+
+- execute the following python script
+```shell
+$ pyarch convert-qupath-project --qupath-project-path ProjectQuPath.qpproj --output-path /arch/QuPath_Results 
+```
+
 3. Compute the  cell densities  as function of brain depth
 - modify ./Config/linux/batch_density.ini with your configuration
 - execute the following python script

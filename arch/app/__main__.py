@@ -45,7 +45,7 @@ def app(verbose=0):
 
 
 app.add_command(name="convert", cmd=batch_convert)
-app.add_command(name="qupath-project-convert", cmd=project_convert)
+app.add_command(name="convert-qupath-project", cmd=project_convert)
 app.add_command(name="density-per-layer", cmd=batch_density_layer)
 app.add_command(name="density-per-depth", cmd=batch_density_depth)
 
