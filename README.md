@@ -125,16 +125,22 @@ $ pyarch convert-qupath-project --qupath-project-path ProjectQuPath.qpproj --out
 ```
 
 3. Compute the  cell densities  as function of brain depth
-- modify ./Config/linux/batch_density.ini with your configuration
+- modify ./Config/linux/batch_density_depth with your configuration
 - execute the following python script
 ```shell
 $  pyarch density-per-depth --config-file-path ./Config/batch_density.ini
 ```
-4. Compute the  cell densities  by layer 
-- modify ./Config/linux/batch_density.ini with your configuration
+4. Compute the  cell densities  by layer (L2 and L3 merged)
+- modify ./Config/linux/batch_density_layer_merged.ini with your configuration
 - execute the following python script
 ```shell
-$  pyarch density-per-layer --config-file-path ./Config/batch_density.ini
+$  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merged.ini
+```
+5. Compute the  cell densities  by layer (L2 and L3 distinguished)
+- modify ./Config/linux/batch_density_layer_distinguish.ini with your configuration
+- execute the following python script
+```shell
+$  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
 ```
 
 
