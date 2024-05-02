@@ -17,11 +17,8 @@ import qupath.ext.biop.cellpose.Cellpose2D
 
 def logger = LoggerFactory.getLogger(this.class);
 
-
-//def saveFolderPath =  this.args[0]
-//def modelPath =  this.args[1]
 def modelPath =  "/arch/cellpose_model/cellpose_residual_on_style_on_concatenation_off_train_2022_01_11_16_14_20.764792"
-def saveFolderPath =  "/arch/QuPath_Results"
+def saveFolderPath =  "/arch/Results"
 def CountourFinderPath = "/arch/qupath_scripts/CountourFinder.json"
 def LayerClassifierPath = "/arch/qupath_scripts/Layer Classiffier.json"
 

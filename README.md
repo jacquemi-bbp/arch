@@ -92,7 +92,7 @@ see requirements.txt
 - Export result files
 
 
-## How To
+## Pipeline How To
 
 1. Detect cells and export their features and the QuPath annotations
 - Edit the qupath_scripts/full_quPath_script.groovy and modify the pathes for the following entries to make them corresponding to your environment:
@@ -114,21 +114,21 @@ qupath_scripts/full_QuPath_script.groovy
 
 - execute the following python script
 ```shell
-$ pyarch convert --config-file-path ./Config/batch_converty.ini
+$ pyarch convert --config-file-path ./Config/batch_convert.ini
 ```
 
 2.1. Convert the QuPath project metadata to a pandas dataframe
 
 - execute the following python script
 ```shell
-$ pyarch convert-qupath-project --qupath-project-path ProjectQuPath.qpproj --output-path /arch/QuPath_Results 
+$ pyarch convert-qupath-project --qupath-project-path ProjectQuPath.qpproj --output-path /arch/Results 
 ```
 
 3. Compute the  cell densities  as function of brain depth
 - modify ./Config/linux/batch_density_depth with your configuration
 - execute the following python script
 ```shell
-$  pyarch density-per-depth --config-file-path ./Config/batch_density.ini
+$  pyarch density-per-depth --config-file-path ./Config/batch_density_depth.ini
 ```
 4. Compute the  cell densities  by layer (L2 and L3 merged)
 - modify ./Config/linux/batch_density_layer_merged.ini with your configuration
@@ -143,6 +143,10 @@ $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merg
 $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
 ```
 
+## Figures Howto
+
+### By hemisphere figures
+To produce the by hemisphere figures, a csv file is required; fill the data/metadata.csv.
 
 
 ## Funding & Acknowledgment
