@@ -30,7 +30,7 @@ From these images imported in QuPath projects, some QuPath annotations made by e
  
 ## The pipeline consists of two main steps:
 1. Within QuPath (Third party application), execute cells detection and export cells features and annotations.
-2. Processing the data exported by QuPath during the previous step, in order to compute the layers boundary and the cells density.
+2. Processing the data exported by QuPath during the previous step, in order to compute the layers boundary and the cell densities.
  
 ## Lexicon
 The following definitions will stay in effect throughout the code.

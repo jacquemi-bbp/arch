@@ -51,13 +51,24 @@ def cmd_depth(
 
     output_path = config["BATCH"]["output_path"]
     cell_position_path = config["BATCH"]["cell_position_path"]
-    cell_position_file_prefix = config["BATCH"]["cell_position_file_prefix"]
+    try:
+        cell_position_file_prefix = config["BATCH"]["cell_position_file_prefix"]
+    except KeyError:
+        cell_position_file_prefix = 'Features_'
 
     points_annotations_path = config["BATCH"]["points_annotations_path"]
-    points_annotations_file_prefix = config["BATCH"]["points_annotations_file_prefix"]
+    
+    try:
+        points_annotations_file_prefix = config["BATCH"]["points_annotations_file_prefix"]
+    except KeyError:
+        points_annotations_file_prefix = ''
 
     s1hl_path = config["BATCH"]["s1hl_path"]
-    s1hl_file_prefix = config["BATCH"]["s1hl_file_prefix"]
+    
+    try:
+        s1hl_file_prefix = config["BATCH"]["s1hl_file_prefix"]
+    except KeyError:
+        s1hl_file_prefix = ''
 
     thickness_cut = float(config["BATCH"]["thickness_cut"])
     nb_row = int(config["BATCH"]["nb_row"])
@@ -106,8 +117,12 @@ def cmd_layer(
 
     output_path = config["BATCH"]["output_path"]
     cell_position_path = config["BATCH"]["cell_position_path"]
-    cell_position_file_prefix = config["BATCH"]["cell_position_file_prefix"]
 
+    try:
+        cell_position_file_prefix = config["BATCH"]["cell_position_file_prefix"]
+    except KeyError:
+        cell_position_file_prefix = 'Features_'
+    
     try:
         alpha = int(config["BATCH"]["alpha"])
     except KeyError:
@@ -246,7 +261,7 @@ def multiple_image_process(
             if densities_dataframe is None:
                 print(
                     f"ERROR: {image_name} The computed density is not valid to compute\
-                 the per depth density"
+the per depth density"
                 )
             else:
                 densities_dataframe_full_path = output_path + "/" + image_name + ".csv"
