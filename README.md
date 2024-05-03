@@ -3,7 +3,6 @@
 [![Build status](https://github.com/jacquemi-bbp/arch/actions/workflows/run-tox.yml/badge.svg?branch=main)](https://github.com/jacquemi-bbp/arch/actions)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Licence](https://img.shields.io/badge/License-GPLv3-blue)](https://github.com/jacquemi-bbp/arch/blob/main/LICENSE)
-[![Documentation status](https://readthedocs.org/projects/bbparch/badge/?version=latest)](https://arch.readthedocs.io/)
 [![DOI](https://img.shields.io/badge)](https://doi.org/)
 
 
@@ -17,11 +16,10 @@ Machine learning for histological annotation and quantification of cortical laye
 
 
 ## Main usage
-This pipeline automatically detects brain cells, classifies them by brain layer, and computes cell density. It has been utilized for rat somatosensory cortex Nissl microscopy images, provided by the EPFL LNMC laboratory.
+This pipeline automatically detects brain cells, classifies them by brain layer and computes cell density. It has been utilized for rat somatosensory cortex Nissl microscopy images, provided by the EPFL LNMC laboratory.
 
 Utilizing images of tissue stained with the classical cresyl violet, imported into  QuPath projects,
-alongside a few QuPath annotations made by experts and metadata in a CSV file, this pipeline can generate the boundaries of the somatosensory cortex S1HL layers, the cell densities as function of brain depth,
-cell densities per brain layers as presented above:
+alongside a few QuPath annotations made by experts and metadata in a CSV file, this pipeline generates the boundaries of the somatosensory cortex S1HL layers, the cell densities as function of brain depth and the cell densities per brain layers as presented above:
   - The somatosensory cortex S1HL layers boundaries.
 
 
