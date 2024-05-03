@@ -211,7 +211,7 @@ To produce the by hemisphere figures, a csv file is required:
  - edit the data/metadata.csv.
  - execute the following python script 
    ```shell
-      python figures_script/cells_density.py $RESULT_PATH/output_path_batch/PerDepth $RESULT_PATH/output_path_batch/merged/ $RESULT_PATH/output_path_batch/distinguish/ $FIGURE_PATH ./data/metadata.csv
+      pipelne.sh
    ```
 
 
