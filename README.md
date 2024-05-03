@@ -2,7 +2,7 @@
 
 [![Build status](https://github.com/jacquemi-bbp/arch/actions/workflows/run-tox.yml/badge.svg?branch=main)](https://github.com/jacquemi-bbp/arch/actions)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Licence](https://img.shields.io/badge/License-GPLv3-blue)](https://github.com/BlueBrain/NeuroTS/blob/main/LICENSE.txt)
+[![Licence](https://img.shields.io/badge/License-GPLv3-blue)](https://github.com/jacquemi-bbp/arch/blob/main/LICENSE)
 [![Documentation status](https://readthedocs.org/projects/bbparch/badge/?version=latest)](https://arch.readthedocs.io/)
 [![DOI](https://img.shields.io/badge)](https://doi.org/)
 
