@@ -133,6 +133,8 @@ ed: 50 µm: Nearby detection counts
 
 ## Pipeline How To
 
+### Step by step:
+
 1. Detect cells and export their features and the QuPath annotations
    - Edit the qupath_scripts/full_quPath_script.groovy and modify the pathes for the following entries to make them corresponding to your environment:
      - modelPath
@@ -158,7 +160,7 @@ ed: 50 µm: Nearby detection counts
    ```
 
 
-2.1. Convert the QuPath project metadata to a pandas dataframe
+3. Convert the QuPath project metadata to a pandas dataframe
 
    - execute the following python script
    ```shell
@@ -166,33 +168,42 @@ ed: 50 µm: Nearby detection counts
    ```
 
 
-3. Compute the  cell densities  as function of brain depth
+4. Compute the  cell densities  as function of brain depth
    - modify ./Config/linux/batch_density_depth with your configuration
      - execute the following python script
    ```shell
    $  pyarch density-per-depth --config-file-path ./Config/batch_density_depth.ini
    ```
 
-4. Predict the layers:
+5. Predict the layers:
    - execute the following python script
    ```shell
    $  pyarchpredict-layer --config-file-path ./Config/batch_layers.ini
    ```
 
-5. Compute the  cell densities  by layer (L2 and L3 merged)
+6. Compute the  cell densities  by layer (L2 and L3 merged)
    - modify ./Config/linux/batch_density_layer_merged.ini with your configuration
    - execute the following python script
    ```shell
    $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merged.ini
    ```
-6. Compute the  cell densities  by layer (L2 and L3 distinguished)
+7. Compute the  cell densities  by layer (L2 and L3 distinguished)
    - modify ./Config/linux/batch_density_layer_distinguish.ini with your configuration
    - execute the following python script
 ```shell
 $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
 ```
 
-
+### In a single pipeline command:
+- Edit the configuration file as described above.
+- Edit the pipeline.sh script to modify the following inputs:
+  - QUPATH_PROJECT_PATH
+  - RESULT_PATH
+  - FIGURE_PATH
+- execute the pipeline.sh command:
+```shell
+$  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
+```
 ## Figures Howto
 
 ### By hemisphere figures
