@@ -169,16 +169,23 @@ ed: 50 µm: Nearby detection counts
 3. Compute the  cell densities  as function of brain depth
    - modify ./Config/linux/batch_density_depth with your configuration
      - execute the following python script
-```shell
-$  pyarch density-per-depth --config-file-path ./Config/batch_density_depth.ini
-```
-4. Compute the  cell densities  by layer (L2 and L3 merged)
+   ```shell
+   $  pyarch density-per-depth --config-file-path ./Config/batch_density_depth.ini
+   ```
+
+4. Predict the layers:
+   - execute the following python script
+   ```shell
+   $  pyarchpredict-layer --config-file-path ./Config/batch_layers.ini
+   ```
+
+5. Compute the  cell densities  by layer (L2 and L3 merged)
    - modify ./Config/linux/batch_density_layer_merged.ini with your configuration
    - execute the following python script
-```shell
-$  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merged.ini
-```
-5. Compute the  cell densities  by layer (L2 and L3 distinguished)
+   ```shell
+   $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merged.ini
+   ```
+6. Compute the  cell densities  by layer (L2 and L3 distinguished)
    - modify ./Config/linux/batch_density_layer_distinguish.ini with your configuration
    - execute the following python script
 ```shell
@@ -188,11 +195,13 @@ $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_dist
 
 ## Figures Howto
 
-
 ### By hemisphere figures
-To produce the by hemisphere figures, a csv file is required; fill the data/metadata.csv.
-
-
+To produce the by hemisphere figures, a csv file is required:
+ - edit the data/metadata.csv.
+ - execute the following python script 
+   ```shell
+      python figures_script/cells_density.py $RESULT_PATH/output_path_batch/PerDepth $RESULT_PATH/output_path_batch/merged/ $RESULT_PATH/output_path_batch/distinguish/ $FIGURE_PATH ./data/metadata.csv
+   ```
 
 
 ## Funding & Acknowledgment
