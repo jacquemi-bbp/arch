@@ -26,7 +26,7 @@ alongside a few QuPath annotations made by experts and metadata in a CSV file, t
 <img src="docs/source/images/layer_boundaries.png" alt="Doc/layer_boundaries.png" width="200"/>
 
 
--  Cells densities as a function of the percentage of depth inside the somatosensory cortex S1HL.
+-  Cells densities as function of the percentage of depth inside the somatosensory cortex S1HL.
 
 
 <img src="docs/source/images/percentage_of_depth.png" alt="Doc/percentage_of_depth.png" width="200"/>
@@ -134,56 +134,53 @@ ed: 50 µm: Nearby detection counts
 ## Pipeline How To
 
 1. Detect cells and export their features and the QuPath annotations
-- Edit the qupath_scripts/full_quPath_script.groovy and modify the pathes for the following entries to make them corresponding to your environment:
- - modelPath
- - saveFolderPath
- - CountourFinderPath
- - LayerClassiferPath
-- Create the saveFolderPath if it does not already exist.
+   - Edit the qupath_scripts/full_quPath_script.groovy and modify the pathes for the following entries to make them corresponding to your environment:
+     - modelPath
+     - saveFolderPath
+     - CountourFinderPath
+     - LayerClassiferPath
+   - Create the saveFolderPath if it does not already exist.
 
 
 - Execute the following groovy script inside the QuPath application or via a script thanks to the QuPath script command:
-qupath_scripts/full_QuPath_script.groovy
+   - qupath_scripts/full_QuPath_script.groovy
 
 
 2. Convert the QuPath results to pandas dataframes in batch
-- modify the following entries ./Config/batch_convert.ini with your configuration
- - input_detection_directory
- - input_annotation_directory
- - output_directory
- - pixel_size
-
-
-- execute the following python script
-```shell
-$ pyarch convert --config-file-path ./Config/batch_convert.ini
-```
+   - modify the following entries ./Config/batch_convert.ini with your configuration
+     - input_detection_directory
+     - input_annotation_directory
+     - output_directory
+     - pixel_size
+   - execute the following python script
+   ```shell
+   $ pyarch convert --config-file-path ./Config/batch_convert.ini
+   ```
 
 
 2.1. Convert the QuPath project metadata to a pandas dataframe
 
-
-- execute the following python script
-```shell
-$ pyarch convert-qupath-project --qupath-project-path ProjectQuPath.qpproj --output-path /arch/Results
-```
+   - execute the following python script
+   ```shell
+   $ pyarch convert-qupath-project --qupath-project-path ProjectQuPath.qpproj --output-path /arch/Results
+   ```
 
 
 3. Compute the  cell densities  as function of brain depth
-- modify ./Config/linux/batch_density_depth with your configuration
-- execute the following python script
+   - modify ./Config/linux/batch_density_depth with your configuration
+     - execute the following python script
 ```shell
 $  pyarch density-per-depth --config-file-path ./Config/batch_density_depth.ini
 ```
 4. Compute the  cell densities  by layer (L2 and L3 merged)
-- modify ./Config/linux/batch_density_layer_merged.ini with your configuration
-- execute the following python script
+   - modify ./Config/linux/batch_density_layer_merged.ini with your configuration
+   - execute the following python script
 ```shell
 $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merged.ini
 ```
 5. Compute the  cell densities  by layer (L2 and L3 distinguished)
-- modify ./Config/linux/batch_density_layer_distinguish.ini with your configuration
-- execute the following python script
+   - modify ./Config/linux/batch_density_layer_distinguish.ini with your configuration
+   - execute the following python script
 ```shell
 $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
 ```
