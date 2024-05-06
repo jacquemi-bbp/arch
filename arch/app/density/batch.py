@@ -23,7 +23,7 @@ import os
 import click
 import pandas as pd
 
-from arch.density import single_image_process
+from arch.density import single_image_process_per_layer, single_image_process_per_depth
 from arch.io import write_dataframe_to_file
 
 
@@ -74,7 +74,7 @@ def cmd_depth(
     nb_row = int(config["BATCH"]["nb_row"])
     nb_col = int(config["BATCH"]["nb_col"])
 
-    multiple_image_process(
+    multiple_image_process_per_depth(
         cell_position_path,
         cell_position_file_prefix,
         output_path,
@@ -128,20 +128,140 @@ def cmd_layer(
     except KeyError:
         alpha = 0.05
 
-    multiple_image_process(
+    try:
+        meta_df_path = config["BATCH"]["meta_df_path"]
+    except KeyError:
+        meta_df_path=None
+
+    try:
+        animal_id = config["BATCH"]["animal_id"]
+    except KeyError:
+        animal_id=None
+
+    print(f'DEBUG animal_id {animal_id}')
+
+    multiple_image_process_per_layer(
         cell_position_path,
         cell_position_file_prefix,
         output_path,
         image_to_exlude_path,
         visualisation_flag,
         save_plot_flag,
-        compute_per_depth=False,
-        compute_per_layer=True,
+        meta_df_path=meta_df_path,
+        animal_id=animal_id,
         alpha=alpha,
     )
 
 
-def multiple_image_process(
+def multiple_image_process_per_layer(
+        cell_position_path,
+        cell_position_file_prefix,
+        output_path,
+        image_to_exlude_path,
+        visualisation_flag,
+        save_plot_flag,
+        meta_df_path=None,
+        animal_id=None,
+        alpha=0,
+):
+    """
+    loop over image and execute single_image_process for each image
+    Args:
+        cell_position_path: (str)
+        cell_position_file_prefix: (str)
+        output_path: (str)
+        image_to_exlude_path: (str)
+        visualisation_flag (bool) If True display plots
+        save_plot_flag (bool) If True, save plots
+        alpha: (float) alphashape alpha value. Only used if compute_per_layer is True
+    """
+    # List images to compute
+    image_path_list = glob.glob(cell_position_path + "/*.csv")
+
+    if meta_df_path and animal_id:
+        meta_df = pd.read_csv(meta_df_path, index_col=0)
+        animal_df = meta_df[meta_df['Project_ID'] == animal_id]
+        animal_images = animal_df.Image_Name.to_list()
+
+    image_list = []
+    feature_str_length = len(cell_position_file_prefix)
+    for path in image_path_list:
+        prefix_pos = path.rfind(cell_position_file_prefix)
+        if prefix_pos > -1:
+            feature_pos = path.rfind(cell_position_file_prefix) + feature_str_length
+            image_name = path[feature_pos: path.find(".csv")]
+            find_animal = True
+            if animal_id:
+                find_animal = False
+                for image in animal_images:
+                    if image_name.find(image) > -1:
+                        find_animal = True
+        if find_animal:
+            image_list.append(image_name)
+
+    if len(image_list) == 0:
+        print("WARNING: No input files to process.")
+        return
+
+    print(f'INFO" {len(image_list)} to process')
+
+    if not os.path.exists(output_path):
+        # if the directory is not present then create it.
+        os.makedirs(output_path)
+        print(f"INFO: Create output_path {output_path}")
+
+    # Verify that the image is not in the exlude images list
+    df_image_to_exclude = None
+    if image_to_exlude_path:
+        df_image_to_exclude = pd.read_excel(
+            image_to_exlude_path, index_col=0, skiprows=[0, 1, 2, 3, 4, 5, 6, 7]
+        )
+
+        # Some image may be keep if we only compute the density per layer
+        df_image_to_exclude = df_image_to_exclude[
+            df_image_to_exclude[
+                "Exclusion reason (Cell density calculation)"
+            ].str.find("DistanceToMidline_3.05-3.25")
+            == -1
+            ]
+        print(f'DEBUG len(df_image_to_exclude), {len(df_image_to_exclude)}')
+
+    for image_name in image_list:
+        print("INFO: Process single image ", image_name)
+        cell_position_file_path = (
+                cell_position_path + "/" + cell_position_file_prefix + image_name + ".csv"
+        )
+
+        per_layer_dataframe = single_image_process_per_layer(
+            image_name,
+            cell_position_file_path,
+            output_path,
+            df_image_to_exclude=df_image_to_exclude,
+            thickness_cut=50,
+            visualisation_flag=visualisation_flag,
+            save_plot_flag=save_plot_flag,
+            alpha=alpha,
+        )
+
+        if per_layer_dataframe is None:
+            print(
+                "ERROR: The computed density per layer is not valid to compute the per \
+             layer density"
+            )
+        else:
+            densities_per_layer_dataframe_full_path = (
+                    output_path + "/" + image_name + "_per_layer.csv"
+            )
+            write_dataframe_to_file(
+                per_layer_dataframe, densities_per_layer_dataframe_full_path
+            )
+            print(
+                f"INFO: Write density per layer dataframe to \
+             {densities_per_layer_dataframe_full_path}"
+            )
+
+
+def multiple_image_process_per_depth(
     cell_position_path,
     cell_position_file_prefix,
     output_path,
@@ -157,7 +277,6 @@ def multiple_image_process(
     nb_col=20,
     nb_row=20,
     thickness_cut=50,
-    alpha=0,
 ):
     """
     loop over image and execute single_image_process for each image
@@ -207,14 +326,6 @@ def multiple_image_process(
         df_image_to_exclude = pd.read_excel(
             image_to_exlude_path, index_col=0, skiprows=[0, 1, 2, 3, 4, 5, 6, 7]
         )
-        if compute_per_layer:
-            # Some image may be keep if we only compute the density per layer
-            df_image_to_exclude = df_image_to_exclude[
-                df_image_to_exclude[
-                    "Exclusion reason (Cell density calculation)"
-                ].str.find("DistanceToMidline_3.05-3.25")
-                == -1
-            ]
 
     for image_name in image_list:
         print("INFO: Process single image ", image_name)
@@ -222,26 +333,22 @@ def multiple_image_process(
             cell_position_path + "/" + cell_position_file_prefix + image_name + ".csv"
         )
 
-        if compute_per_depth:
-            points_annotations_file_path = (
-                points_annotations_path
-                + "/"
-                + points_annotations_file_prefix
-                + image_name
-                + "_points_annotations.csv"
-            )
-            s1hl_file_path = (
-                s1hl_path
-                + "/"
-                + s1hl_file_prefix
-                + image_name
-                + "_S1HL_annotations.csv"
-            )
-        else:
-            points_annotations_file_path = None
-            s1hl_file_path = None
+        points_annotations_file_path = (
+            points_annotations_path
+            + "/"
+            + points_annotations_file_prefix
+            + image_name
+            + "_points_annotations.csv"
+        )
+        s1hl_file_path = (
+            s1hl_path
+            + "/"
+            + s1hl_file_prefix
+            + image_name
+            + "_S1HL_annotations.csv"
+        )
 
-        densities_dataframe, per_layer_dataframe = single_image_process(
+        densities_dataframe = single_image_process_per_depth(
             image_name,
             cell_position_file_path,
             points_annotations_file_path,
@@ -253,40 +360,19 @@ def multiple_image_process(
             nb_row=nb_row,
             visualisation_flag=visualisation_flag,
             save_plot_flag=save_plot_flag,
-            alpha=alpha,
-            compute_per_layer=compute_per_layer,
-            compute_per_depth=compute_per_depth,
         )
-        if compute_per_depth:
-            if densities_dataframe is None:
-                print(
-                    f"ERROR: {image_name} The computed density is not valid to compute\
+
+        if densities_dataframe is None:
+            print(
+                f"ERROR: {image_name} The computed density is not valid to compute\
 the per depth density"
-                )
-            else:
-                densities_dataframe_full_path = output_path + "/" + image_name + ".csv"
+            )
+        else:
+            densities_dataframe_full_path = output_path + "/" + image_name + ".csv"
 
-                write_dataframe_to_file(
-                    densities_dataframe, densities_dataframe_full_path
-                )
-                print(
-                    f"INFO: Write density dataframe =to {densities_dataframe_full_path}"
-                )
-
-        if compute_per_layer:
-            if per_layer_dataframe is None:
-                print(
-                    "ERROR: The computed density per layer is not valid to compute the per \
-                 depth density"
-                )
-            else:
-                densities_per_layer_dataframe_full_path = (
-                    output_path + "/" + image_name + "_per_layer.csv"
-                )
-                write_dataframe_to_file(
-                    per_layer_dataframe, densities_per_layer_dataframe_full_path
-                )
-                print(
-                    f"INFO: Write density per layer dataframe to \
-                 {densities_per_layer_dataframe_full_path}"
-                )
+            write_dataframe_to_file(
+                densities_dataframe, densities_dataframe_full_path
+            )
+            print(
+                f"INFO: Write density dataframe =to {densities_dataframe_full_path}"
+            )

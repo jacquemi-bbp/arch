@@ -1,0 +1,5 @@
+,Project_ID,Image_Name,Distance_to_midline,Analyze,Exclude,Comment,hemisphere(L/R),Qupath_project_path,dataframe_path,ML_type(GT/FP)
+0,ProjectQuPath,SLD_0000517.vsi-20x_01,around 2.40mm,True,False,0,right,/arch/ProjectQuPath.qpproj,,
+1,ProjectQuPath,SLD_0000736.vsi-20x_01,around 3.40mm,True,False,0,right,/arch/ProjectQuPath.qpproj,,
+2,ProjectQuPath,SLD_0000736.vsi-20x_02,around 3.40mm,True,False,0,left,/arch/ProjectQuPath.qpprojj,,
+3,ProjectQuPath,SLD_0000736.vsi-20x_03,,False,,,,,,

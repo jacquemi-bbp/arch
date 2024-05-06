@@ -157,8 +157,64 @@ def compute_depth_density(
 
     return densities_dataframe
 
+def single_image_process_per_layer(
+    image_name,
+    cell_position_file_path,
+    output_path,
+    df_image_to_exclude=None,
+    thickness_cut=50,
+    visualisation_flag=False,
+    save_plot_flag=False,
+    alpha=0.001,
+):
+    """
+    compute the cell densities as function of brain depth for a single image
+    Args:
+        image_name:(str)
+        cell_position_file_path:(str)
+        output_path:(str)
+        df_image_to_exclude:(pandas.Dataframe)
+        thickness_cut:(int)
+        visualisation_flag:(bool)
+        save_plot_flag=False:(bool)
+        alpha:(float)
+    Returns:
+        A panda.Dataframe that contains the cell densities per layer
+    """
 
-def single_image_process(
+    if df_image_to_exclude is not None:
+        images_to_exlude = get_image_to_exlude_list(df_image_to_exclude)
+        search_name = image_name.replace("Features_", "")
+        if search_name.replace(" ", "") in images_to_exlude:
+            print(f"ERROR {search_name} is present in the df_image_to_exclude dataset")
+            return None, None
+
+    cells_features_df = pd.read_csv(cell_position_file_path, index_col=0)
+    assert "exclude_for_density" in cells_features_df.columns
+
+    per_layer_dataframe = None
+    if "RF_prediction" in cells_features_df:
+        layers = np.unique(cells_features_df.RF_prediction)
+        layers_densities, cells_pos_list, polygons = densities_from_layers(
+            cells_features_df, layers, thickness_cut, alpha=alpha
+        )
+        if visualisation_flag or save_plot_flag:
+            plot_layers(
+                cells_pos_list,
+                polygons,
+                image_name,
+                alpha,
+                output_path,
+                visualisation_flag,
+            )
+            plot_densities_by_layer(
+                layers, layers_densities, image_name, output_path, visualisation_flag
+            )
+        per_layer_dataframe = pd.DataFrame([layers_densities], columns=layers)
+
+    return per_layer_dataframe
+
+def single_image_process_per_depth(
     image_name,
     cell_position_file_path,
     points_annotations_path,
@@ -170,9 +226,6 @@ def single_image_process(
     nb_col=10,
     visualisation_flag=False,
     save_plot_flag=False,
-    alpha=0.001,
-    compute_per_layer=False,
-    compute_per_depth=True,
 ):
     """
     compute the cell densities as function of brain depth for a single image
@@ -205,42 +258,20 @@ def single_image_process(
     cells_features_df = pd.read_csv(cell_position_file_path, index_col=0)
     assert "exclude_for_density" in cells_features_df.columns
 
-    per_layer_dataframe = None
-    if compute_per_layer and "RF_prediction" in cells_features_df:
-        layers = np.unique(cells_features_df.RF_prediction)
-        layers_densities, cells_pos_list, polygons = densities_from_layers(
-            cells_features_df, layers, thickness_cut, alpha=alpha
-        )
-        if visualisation_flag or save_plot_flag:
-            plot_layers(
-                cells_pos_list,
-                polygons,
-                image_name,
-                alpha,
-                output_path,
-                visualisation_flag,
-            )
-            plot_densities_by_layer(
-                layers, layers_densities, image_name, output_path, visualisation_flag
-            )
-        per_layer_dataframe = pd.DataFrame([layers_densities], columns=layers)
+    percentage_dataframe = compute_depth_density(
+        image_name,
+        cells_features_df,
+        points_annotations_path,
+        s1hl_path,
+        output_path,
+        thickness_cut=thickness_cut,
+        nb_row=nb_row,
+        nb_col=nb_col,
+        visualisation_flag=visualisation_flag,
+        save_plot_flag=save_plot_flag,
+    )
 
-    percentage_dataframe = None
-    if compute_per_depth:
-        percentage_dataframe = compute_depth_density(
-            image_name,
-            cells_features_df,
-            points_annotations_path,
-            s1hl_path,
-            output_path,
-            thickness_cut=thickness_cut,
-            nb_row=nb_row,
-            nb_col=nb_col,
-            visualisation_flag=visualisation_flag,
-            save_plot_flag=save_plot_flag,
-        )
-
-    return percentage_dataframe, per_layer_dataframe
+    return percentage_dataframe
 
 
 def densities_from_layers(
