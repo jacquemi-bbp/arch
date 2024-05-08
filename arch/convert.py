@@ -18,14 +18,12 @@ Convert QuPath Detections and annotation to pandas dataframe
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-
+from numpy import random
 import pandas as pd
-
 
 from arch.io import (
     read_qupath_annotations,
 )
-
 from arch.utilities import stereology_exclusion
 
 
@@ -69,6 +67,9 @@ def single_image_conversion(
 
         # START CELL EXCLUSION
         if exclude:
+            seed = 0
+            print(f"INFO: Fix the numpy seed")
+            random.seed(seed)
             print("INFO: Start cells exclusion")
             cells_features_dataframe = stereology_exclusion(cells_features_dataframe)
             nb_exclude = cells_features_dataframe["exclude_for_density"].value_counts()[

@@ -1,0 +1,781 @@
+{
+  "version": "0.6.0-SNAPSHOT",
+  "createTimestamp": 1635452423130,
+  "modifyTimestamp": 1635452423130,
+  "uri": "file:/home/jacquemi/working_dir/Rat_sscx_nissl/ProjectQuPath_for_test/ProjectQuPath_for_test.qpproj",
+  "lastID": 159,
+  "images": [
+    {
+      "serverBuilder": {
+        "builderType": "rotated",
+        "builder": {
+          "builderType": "uri",
+          "providerClassName": "qupath.lib.images.servers.bioformats.BioFormatsServerBuilder",
+          "uri": "file:/gpfs/bbp.cscs.ch/project/proj53/LayerBoundariesProject/LBR_RAWData/Nissl_6/SLD_0000733.vsi",
+          "args": [
+            "--series",
+            "2"
+          ],
+          "metadata": {
+            "name": "SLD_0000733.vsi - 20x_01",
+            "width": 60336,
+            "height": 31997,
+            "sizeZ": 1,
+            "sizeT": 1,
+            "channelType": "DEFAULT",
+            "isRGB": true,
+            "pixelType": "UINT8",
+            "levels": [
+              {
+                "downsample": 1.0,
+                "width": 60336,
+                "height": 31997
+              },
+              {
+                "downsample": 2.0,
+                "width": 30168,
+                "height": 15999
+              },
+              {
+                "downsample": 4.0,
+                "width": 15084,
+                "height": 8000
+              },
+              {
+                "downsample": 8.0,
+                "width": 7542,
+                "height": 4000
+              },
+              {
+                "downsample": 16.0,
+                "width": 3771,
+                "height": 2000
+              },
+              {
+                "downsample": 32.0,
+                "width": 1886,
+                "height": 1000
+              },
+              {
+                "downsample": 64.0,
+                "width": 943,
+                "height": 500
+              },
+              {
+                "downsample": 128.0,
+                "width": 472,
+                "height": 250
+              }
+            ],
+            "channels": [
+              {
+                "name": "Red",
+                "color": -65536
+              },
+              {
+                "name": "Green",
+                "color": -16711936
+              },
+              {
+                "name": "Blue",
+                "color": -16776961
+              }
+            ],
+            "pixelCalibration": {
+              "pixelWidth": {
+                "value": 0.34598440985835877,
+                "unit": "µm"
+              },
+              "pixelHeight": {
+                "value": 0.3459840720257497,
+                "unit": "µm"
+              },
+              "zSpacing": {
+                "value": 1.0,
+                "unit": "z-slice"
+              },
+              "timeUnit": "SECONDS",
+              "timepoints": []
+            },
+            "magnification": 20.0,
+            "preferredTileWidth": 512,
+            "preferredTileHeight": 512
+          }
+        },
+        "rotation": "ROTATE_180",
+        "metadata": {
+          "name": "SLD_0000733.vsi - 20x_01",
+          "width": 60336,
+          "height": 31997,
+          "sizeZ": 1,
+          "sizeT": 1,
+          "channelType": "DEFAULT",
+          "isRGB": true,
+          "pixelType": "UINT8",
+          "levels": [
+            {
+              "downsample": 1.0,
+              "width": 60336,
+              "height": 31997
+            },
+            {
+              "downsample": 2.0,
+              "width": 30168,
+              "height": 15999
+            },
+            {
+              "downsample": 4.0,
+              "width": 15084,
+              "height": 8000
+            },
+            {
+              "downsample": 8.0,
+              "width": 7542,
+              "height": 4000
+            },
+            {
+              "downsample": 16.0,
+              "width": 3771,
+              "height": 2000
+            },
+            {
+              "downsample": 32.0,
+              "width": 1886,
+              "height": 1000
+            },
+            {
+              "downsample": 64.0,
+              "width": 943,
+              "height": 500
+            },
+            {
+              "downsample": 128.0,
+              "width": 472,
+              "height": 250
+            }
+          ],
+          "channels": [
+            {
+              "name": "Red",
+              "color": -65536
+            },
+            {
+              "name": "Green",
+              "color": -16711936
+            },
+            {
+              "name": "Blue",
+              "color": -16776961
+            }
+          ],
+          "pixelCalibration": {
+            "pixelWidth": {
+              "value": 0.34598440985835877,
+              "unit": "µm"
+            },
+            "pixelHeight": {
+              "value": 0.3459840720257497,
+              "unit": "µm"
+            },
+            "zSpacing": {
+              "value": 1.0,
+              "unit": "z-slice"
+            },
+            "timeUnit": "SECONDS",
+            "timepoints": []
+          },
+          "magnification": 20.0,
+          "preferredTileWidth": 512,
+          "preferredTileHeight": 512
+        }
+      },
+      "entryID": 118,
+      "randomizedName": "652b055b-cdd0-4de7-9997-812c15b274b0",
+      "imageName": "SLD_0000733.vsi - 20x_01",
+      "metadata": {
+        "Distance to midline": "3.10mm",
+        "Analyze": "True",
+        "Rotated": "Yes"
+      }
+    },
+    {
+      "serverBuilder": {
+        "builderType": "rotated",
+        "builder": {
+          "builderType": "uri",
+          "providerClassName": "qupath.lib.images.servers.bioformats.BioFormatsServerBuilder",
+          "uri": "file:/gpfs/bbp.cscs.ch/project/proj53/LayerBoundariesProject/LBR_RAWData/Nissl_6/SLD_0000736.vsi",
+          "args": [
+            "--series",
+            "2"
+          ],
+          "metadata": {
+            "name": "SLD_0000736.vsi - 20x_01",
+            "width": 46177,
+            "height": 27816,
+            "sizeZ": 1,
+            "sizeT": 1,
+            "channelType": "DEFAULT",
+            "isRGB": true,
+            "pixelType": "UINT8",
+            "levels": [
+              {
+                "downsample": 1.0,
+                "width": 46177,
+                "height": 27816
+              },
+              {
+                "downsample": 2.0,
+                "width": 23089,
+                "height": 13908
+              },
+              {
+                "downsample": 4.0,
+                "width": 11545,
+                "height": 6954
+              },
+              {
+                "downsample": 8.0,
+                "width": 5773,
+                "height": 3477
+              },
+              {
+                "downsample": 16.0,
+                "width": 2887,
+                "height": 1739
+              },
+              {
+                "downsample": 32.0,
+                "width": 1444,
+                "height": 870
+              },
+              {
+                "downsample": 64.0,
+                "width": 722,
+                "height": 435
+              },
+              {
+                "downsample": 128.0,
+                "width": 361,
+                "height": 218
+              }
+            ],
+            "channels": [
+              {
+                "name": "Red",
+                "color": -65536
+              },
+              {
+                "name": "Green",
+                "color": -16711936
+              },
+              {
+                "name": "Blue",
+                "color": -16776961
+              }
+            ],
+            "pixelCalibration": {
+              "pixelWidth": {
+                "value": 0.3459847473166436,
+                "unit": "µm"
+              },
+              "pixelHeight": {
+                "value": 0.3459794802579908,
+                "unit": "µm"
+              },
+              "zSpacing": {
+                "value": 1.0,
+                "unit": "z-slice"
+              },
+              "timeUnit": "SECONDS",
+              "timepoints": []
+            },
+            "magnification": 20.0,
+            "preferredTileWidth": 512,
+            "preferredTileHeight": 512
+          }
+        },
+        "rotation": "ROTATE_180",
+        "metadata": {
+          "name": "SLD_0000736.vsi - 20x_01",
+          "width": 46177,
+          "height": 27816,
+          "sizeZ": 1,
+          "sizeT": 1,
+          "channelType": "DEFAULT",
+          "isRGB": true,
+          "pixelType": "UINT8",
+          "levels": [
+            {
+              "downsample": 1.0,
+              "width": 46177,
+              "height": 27816
+            },
+            {
+              "downsample": 2.0,
+              "width": 23089,
+              "height": 13908
+            },
+            {
+              "downsample": 4.0,
+              "width": 11545,
+              "height": 6954
+            },
+            {
+              "downsample": 8.0,
+              "width": 5773,
+              "height": 3477
+            },
+            {
+              "downsample": 16.0,
+              "width": 2887,
+              "height": 1739
+            },
+            {
+              "downsample": 32.0,
+              "width": 1444,
+              "height": 870
+            },
+            {
+              "downsample": 64.0,
+              "width": 722,
+              "height": 435
+            },
+            {
+              "downsample": 128.0,
+              "width": 361,
+              "height": 218
+            }
+          ],
+          "channels": [
+            {
+              "name": "Red",
+              "color": -65536
+            },
+            {
+              "name": "Green",
+              "color": -16711936
+            },
+            {
+              "name": "Blue",
+              "color": -16776961
+            }
+          ],
+          "pixelCalibration": {
+            "pixelWidth": {
+              "value": 0.3459847473166436,
+              "unit": "µm"
+            },
+            "pixelHeight": {
+              "value": 0.3459794802579908,
+              "unit": "µm"
+            },
+            "zSpacing": {
+              "value": 1.0,
+              "unit": "z-slice"
+            },
+            "timeUnit": "SECONDS",
+            "timepoints": []
+          },
+          "magnification": 20.0,
+          "preferredTileWidth": 512,
+          "preferredTileHeight": 512
+        }
+      },
+      "entryID": 138,
+      "randomizedName": "b053e6bc-e70b-4b05-a1d9-cd28a958b681",
+      "imageName": "SLD_0000736.vsi - 20x_01",
+      "metadata": {
+        "Distance to midline": "2.40mm",
+        "Analyze": "True",
+        "Rotated": "Yes"
+      }
+    },
+    {
+      "serverBuilder": {
+        "builderType": "rotated",
+        "builder": {
+          "builderType": "uri",
+          "providerClassName": "qupath.lib.images.servers.bioformats.BioFormatsServerBuilder",
+          "uri": "file:/gpfs/bbp.cscs.ch/project/proj53/LayerBoundariesProject/LBR_RAWData/Nissl_6/SLD_0000736.vsi",
+          "args": [
+            "--series",
+            "3"
+          ],
+          "metadata": {
+            "name": "SLD_0000736.vsi - 20x_02",
+            "width": 59624,
+            "height": 27626,
+            "sizeZ": 1,
+            "sizeT": 1,
+            "channelType": "DEFAULT",
+            "isRGB": true,
+            "pixelType": "UINT8",
+            "levels": [
+              {
+                "downsample": 1.0,
+                "width": 59624,
+                "height": 27626
+              },
+              {
+                "downsample": 2.0,
+                "width": 29812,
+                "height": 13813
+              },
+              {
+                "downsample": 4.0,
+                "width": 14906,
+                "height": 6907
+              },
+              {
+                "downsample": 8.0,
+                "width": 7453,
+                "height": 3454
+              },
+              {
+                "downsample": 16.0,
+                "width": 3727,
+                "height": 1727
+              },
+              {
+                "downsample": 32.0,
+                "width": 1864,
+                "height": 864
+              },
+              {
+                "downsample": 64.0,
+                "width": 932,
+                "height": 432
+              },
+              {
+                "downsample": 128.0,
+                "width": 466,
+                "height": 216
+              }
+            ],
+            "channels": [
+              {
+                "name": "Red",
+                "color": -65536
+              },
+              {
+                "name": "Green",
+                "color": -16711936
+              },
+              {
+                "name": "Blue",
+                "color": -16776961
+              }
+            ],
+            "pixelCalibration": {
+              "pixelWidth": {
+                "value": 0.3459846490285722,
+                "unit": "µm"
+              },
+              "pixelHeight": {
+                "value": 0.3459729610765119,
+                "unit": "µm"
+              },
+              "zSpacing": {
+                "value": 1.0,
+                "unit": "z-slice"
+              },
+              "timeUnit": "SECONDS",
+              "timepoints": []
+            },
+            "magnification": 20.0,
+            "preferredTileWidth": 512,
+            "preferredTileHeight": 512
+          }
+        },
+        "rotation": "ROTATE_180",
+        "metadata": {
+          "name": "SLD_0000736.vsi - 20x_02",
+          "width": 59624,
+          "height": 27626,
+          "sizeZ": 1,
+          "sizeT": 1,
+          "channelType": "DEFAULT",
+          "isRGB": true,
+          "pixelType": "UINT8",
+          "levels": [
+            {
+              "downsample": 1.0,
+              "width": 59624,
+              "height": 27626
+            },
+            {
+              "downsample": 2.0,
+              "width": 29812,
+              "height": 13813
+            },
+            {
+              "downsample": 4.0,
+              "width": 14906,
+              "height": 6907
+            },
+            {
+              "downsample": 8.0,
+              "width": 7453,
+              "height": 3454
+            },
+            {
+              "downsample": 16.0,
+              "width": 3727,
+              "height": 1727
+            },
+            {
+              "downsample": 32.0,
+              "width": 1864,
+              "height": 864
+            },
+            {
+              "downsample": 64.0,
+              "width": 932,
+              "height": 432
+            },
+            {
+              "downsample": 128.0,
+              "width": 466,
+              "height": 216
+            }
+          ],
+          "channels": [
+            {
+              "name": "Red",
+              "color": -65536
+            },
+            {
+              "name": "Green",
+              "color": -16711936
+            },
+            {
+              "name": "Blue",
+              "color": -16776961
+            }
+          ],
+          "pixelCalibration": {
+            "pixelWidth": {
+              "value": 0.3459846490285722,
+              "unit": "µm"
+            },
+            "pixelHeight": {
+              "value": 0.3459729610765119,
+              "unit": "µm"
+            },
+            "zSpacing": {
+              "value": 1.0,
+              "unit": "z-slice"
+            },
+            "timeUnit": "SECONDS",
+            "timepoints": []
+          },
+          "magnification": 20.0,
+          "preferredTileWidth": 512,
+          "preferredTileHeight": 512
+        }
+      },
+      "entryID": 139,
+      "randomizedName": "317020f1-c578-45a3-8389-d9c2934fa8d9",
+      "imageName": "SLD_0000736.vsi - 20x_02",
+      "metadata": {
+        "Distance to midline": "2.35mm",
+        "Analyze": "True",
+        "Rotated": "Yes"
+      }
+    },
+    {
+      "serverBuilder": {
+        "builderType": "rotated",
+        "builder": {
+          "builderType": "uri",
+          "providerClassName": "qupath.lib.images.servers.bioformats.BioFormatsServerBuilder",
+          "uri": "file:/gpfs/bbp.cscs.ch/project/proj53/LayerBoundariesProject/LBR_RAWData/Nissl_6/SLD_0000738.vsi",
+          "args": [
+            "--series",
+            "5"
+          ],
+          "metadata": {
+            "name": "SLD_0000738.vsi - 20x_04",
+            "width": 58281,
+            "height": 28448,
+            "sizeZ": 1,
+            "sizeT": 1,
+            "channelType": "DEFAULT",
+            "isRGB": true,
+            "pixelType": "UINT8",
+            "levels": [
+              {
+                "downsample": 1.0,
+                "width": 58281,
+                "height": 28448
+              },
+              {
+                "downsample": 2.0,
+                "width": 29141,
+                "height": 14224
+              },
+              {
+                "downsample": 4.0,
+                "width": 14571,
+                "height": 7112
+              },
+              {
+                "downsample": 8.0,
+                "width": 7286,
+                "height": 3556
+              },
+              {
+                "downsample": 16.0,
+                "width": 3643,
+                "height": 1778
+              },
+              {
+                "downsample": 32.0,
+                "width": 1822,
+                "height": 889
+              },
+              {
+                "downsample": 64.0,
+                "width": 911,
+                "height": 445
+              },
+              {
+                "downsample": 128.0,
+                "width": 456,
+                "height": 223
+              }
+            ],
+            "channels": [
+              {
+                "name": "Red",
+                "color": -65536
+              },
+              {
+                "name": "Green",
+                "color": -16711936
+              },
+              {
+                "name": "Blue",
+                "color": -16776961
+              }
+            ],
+            "pixelCalibration": {
+              "pixelWidth": {
+                "value": 0.3459805176459673,
+                "unit": "µm"
+              },
+              "pixelHeight": {
+                "value": 0.34597614825227135,
+                "unit": "µm"
+              },
+              "zSpacing": {
+                "value": 1.0,
+                "unit": "z-slice"
+              },
+              "timeUnit": "SECONDS",
+              "timepoints": []
+            },
+            "magnification": 20.0,
+            "preferredTileWidth": 512,
+            "preferredTileHeight": 512
+          }
+        },
+        "rotation": "ROTATE_180",
+        "metadata": {
+          "name": "SLD_0000738.vsi - 20x_04",
+          "width": 58281,
+          "height": 28448,
+          "sizeZ": 1,
+          "sizeT": 1,
+          "channelType": "DEFAULT",
+          "isRGB": true,
+          "pixelType": "UINT8",
+          "levels": [
+            {
+              "downsample": 1.0,
+              "width": 58281,
+              "height": 28448
+            },
+            {
+              "downsample": 2.0,
+              "width": 29141,
+              "height": 14224
+            },
+            {
+              "downsample": 4.0,
+              "width": 14571,
+              "height": 7112
+            },
+            {
+              "downsample": 8.0,
+              "width": 7286,
+              "height": 3556
+            },
+            {
+              "downsample": 16.0,
+              "width": 3643,
+              "height": 1778
+            },
+            {
+              "downsample": 32.0,
+              "width": 1822,
+              "height": 889
+            },
+            {
+              "downsample": 64.0,
+              "width": 911,
+              "height": 445
+            },
+            {
+              "downsample": 128.0,
+              "width": 456,
+              "height": 223
+            }
+          ],
+          "channels": [
+            {
+              "name": "Red",
+              "color": -65536
+            },
+            {
+              "name": "Green",
+              "color": -16711936
+            },
+            {
+              "name": "Blue",
+              "color": -16776961
+            }
+          ],
+          "pixelCalibration": {
+            "pixelWidth": {
+              "value": 0.3459805176459673,
+              "unit": "µm"
+            },
+            "pixelHeight": {
+              "value": 0.34597614825227135,
+              "unit": "µm"
+            },
+            "zSpacing": {
+              "value": 1.0,
+              "unit": "z-slice"
+            },
+            "timeUnit": "SECONDS",
+            "timepoints": []
+          },
+          "magnification": 20.0,
+          "preferredTileWidth": 512,
+          "preferredTileHeight": 512
+        }
+      },
+      "entryID": 153,
+      "randomizedName": "8cb4f4b2-74a6-4b46-9f94-d05689439dc7",
+      "imageName": "SLD_0000738.vsi - 20x_04",
+      "metadata": {
+        "Distance to midline": "1.85mm",
+        "Analyze": "False",
+        "Rotated": "Yes"
+      }
+    }
+  ]
+}

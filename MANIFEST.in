@@ -1,0 +1,3 @@
+recursive-include arch *.*
+global-exclude *.py[co] *~ *.bak *.swp .DS_Store
+include requirements.txt

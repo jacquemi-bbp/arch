@@ -17,13 +17,8 @@ Utilities module
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# import math
+
 import random
-
-# import pandas as pd
-# import numpy as np
-
-
 from sklearn.neighbors import NearestNeighbors
 
 
@@ -38,7 +33,7 @@ def stereology_exclusion(dataframe):
     Returns:
         The input dataframe wityh the new exlude column
     """
-
+    random.seed(0)
     data = dataframe[["Centroid X µm", "Centroid Y µm"]].values
     nbrs = NearestNeighbors(n_neighbors=5, algorithm="kd_tree").fit(data)
     dataframe["mean_diameter"] = 0.5 * (
@@ -46,6 +41,7 @@ def stereology_exclusion(dataframe):
     )
 
     def exclude(sample, slice_thickness=50):
+
         sample["neighbors"] = nbrs.kneighbors(data, 6, return_distance=False)[
             sample.name, :
         ]  # sample.name = row index
