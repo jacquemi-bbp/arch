@@ -27,6 +27,8 @@ from arch.app.convert.batch import cmd as batch_convert
 from arch.app.convert.project import cmd as project_convert
 from arch.app.density.batch import cmd_layer as batch_density_layer
 from arch.app.density.batch import cmd_depth as batch_density_depth
+from arch.app.cell_size.batch import cmd as batch_cell_size
+
 from arch.version import VERSION
 
 
@@ -48,6 +50,7 @@ app.add_command(name="convert", cmd=batch_convert)
 app.add_command(name="convert-qupath-project", cmd=project_convert)
 app.add_command(name="density-per-layer", cmd=batch_density_layer)
 app.add_command(name="density-per-depth", cmd=batch_density_depth)
+app.add_command(name="cell-size", cmd=batch_cell_size)
 
 if __name__ == "__main__":
     app()

@@ -99,23 +99,21 @@ def read_qupath_annotations(directory_path, image_name):
                             value = entry["geometry"]["coordinates"]
                             annotations[key] = np.array(value)
                         except ValueError:
-
-                            #Because of miss created annotation by user, some QuPath annotation type
-                            #are not simple polygon, but ROI (composition of several polygons.
-                            #In this case, we get the bigger polygon and do noy used the other
-                            #Because of miss created annotation by user, some QuPath annotation type
-                            #are not simple polygon, but ROI (composition of several polygons.
-                            #In this case, we get the bigger polygon and do noy used the other
-
+                        # Because of miss created annotation by user, some QuPath annotation type
+                        # are not simple polygon, but ROI (composition of several polygons.
+                        # In this case, we get the bigger polygon and do noy used the other
+                        # Because of miss created annotation by user, some QuPath annotation type
+                        # are not simple polygon, but ROI (composition of several polygons.
+                        # In this case, we get the bigger polygon and do noy used the other
                             if len(value[0]) == 1 and len(value[1]) == 1:
 
-                            #    --
-                            #    | |
+                                #    --
+                                #    | |
 
-                            #    -------
-                            #    |   |
-                            #    |   |
-                            #    -----
+                                #    -------
+                                #    |   |
+                                #    |   |
+                                #    -----
                                 max_len = 0
                                 for entry in value:
 
@@ -125,12 +123,12 @@ def read_qupath_annotations(directory_path, image_name):
                                         bigger_array = np.array(entry)
                                 annotations[key] = bigger_array
                             else:
-                            #        ---
-                            #        | |
-                            #    -------
-                            #    |   |
-                            #    |   |
-                            #    -----
+                                #        ---
+                                #        | |
+                                #    -------
+                                #    |   |
+                                #    |   |
+                                #    -----
                                 if len(value[0]) > len(value[1]):
                                     annotations[key] = np.array([value[0]])
                                 else:

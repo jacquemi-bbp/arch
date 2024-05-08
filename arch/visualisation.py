@@ -17,9 +17,14 @@ visualisation module
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from math import pi
 import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib.lines import Line2D
 import numpy as np
+
 from arch.geometry import compute_cells_polygon_level
+
 
 # plt.rcParams["font.family"] = "Arial"
 layers_color = {
@@ -32,6 +37,7 @@ layers_color = {
     "Layer 6 a": "#00ffff",
     "Layer 6 b": "#00ff66",
 }
+
 
 def get_layer_colors(values):
     """
@@ -407,3 +413,124 @@ def plot_layers(
         file_path = output_path + "/" + image_name + "_layer_from_points.svg"
         plt.savefig(file_path, dpi=150)
     plt.clf()
+
+
+class AnchoredHScaleBar(matplotlib.offsetbox.AnchoredOffsetbox):
+    """size: length of bar in data units
+    extent : height of bar ends in axes unit
+    """
+    def __init__(
+        self,
+        size=1,
+        extent=0.03,
+        label="",
+        loc=2,
+        ax=None,
+        pad=0.4,
+        borderpad=0.5,
+        ppad=0,
+        sep=2,
+        prop=None,
+        frameon=True,
+        linekw={},
+        **kwargs,
+    ):
+        if not ax:
+            ax = plt.gca()
+        trans = ax.get_yaxis_transform()
+        size_bar = matplotlib.offsetbox.AuxTransformBox(trans)
+        line = Line2D([0, 0], [size, 0], **linekw)
+        hline1 = Line2D([-extent / 2.0, extent / 2.0], [0, 0], **linekw)
+        hline2 = Line2D([-extent / 2.0, extent / 2.0], [size, size], **linekw)
+        size_bar.add_artist(line)
+        size_bar.add_artist(hline1)
+        size_bar.add_artist(hline2)
+
+        txt = matplotlib.offsetbox.TextArea(label, textprops={"size": 12})
+        self.vpac = matplotlib.offsetbox.VPacker(
+            children=[size_bar, txt], align="center", pad=ppad, sep=sep
+        )
+        matplotlib.offsetbox.AnchoredOffsetbox.__init__(
+            self,
+            loc,
+            pad=pad,
+            borderpad=borderpad,
+            child=self.vpac,
+            prop=prop,
+            frameon=frameon,
+            **kwargs,
+        )
+
+
+def plots_cells_size_per_layers(
+    area_dataframe, output_path=None):
+    """
+    Make a histogram that represent the cell mean diameters (um) by layer
+    Args:
+        area_dataframe:(pands.Dataframe)
+        output_path:(str)
+        visualisation_flag:(bool) If True display histogram otherwise save to output_path
+    """
+
+    labels = ["L1 ", "L2 ", "L3 ", "L4 ", "L5 ", "L6a ", "L6b "]
+    ratios = [0.6, 1.2, 2.6, 1.5, 2.7, 3.1, 0.7]
+    _, axes = plt.subplots(7, figsize=(5, 20), gridspec_kw={"height_ratios": ratios})
+
+    layers = np.unique(area_dataframe.RF_prediction)
+
+    for i, layer in enumerate(layers):
+        layer_area_dataframe = area_dataframe[area_dataframe.RF_prediction == layer]
+        areas = layer_area_dataframe["Area µm^2"].to_numpy()
+        diameters = np.sqrt((areas / pi)) * 2
+        _ = axes[i].hist(diameters, bins=100)
+        axes[i].spines["top"].set_visible(False)
+        axes[i].spines["right"].set_visible(False)
+        axes[i].spines["bottom"].set_visible(False)
+        axes[i].spines["left"].set_visible(False)
+        axes[i].set_ylim(bottom=0, top=1e4 * ratios[i])
+        axes[i].set_yticklabels([])
+        axes[i].set_yticks([])
+        axes[i].set_ylabel(labels[i], rotation=0, fontsize=12)
+        axes[i].tick_params(axis="x", labelsize=12)
+
+    for i in range(6):
+        axes[i].set_xticks([])
+
+    scalebar = AnchoredHScaleBar(
+        size=5000,
+        label="5000",
+        loc="lower right",
+        frameon=False,
+        pad=0,
+        sep=5,
+        linekw={"color": 'black'},
+    )
+
+    axes[5].add_artist(scalebar)
+
+    axes[0].set_title("S1HL cells mean diameter (µm)", fontsize=12)
+    plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
+
+
+def plots_cells_size(
+    area_dataframe, output_path=None, save_plot_flag=False, visualisation_flag=False
+):
+    """
+    Make a histogram that represent the cell mean diameters (um)
+    Args:
+        area_dataframe:(pands.Dataframe)
+        output_path:(str)
+    """
+    areas = area_dataframe["Area µm^2"]
+    diameters = np.sqrt((areas / pi)) * 2
+    _ = plt.hist(diameters, bins=100)
+    plt.ylabel("Cell count")
+    plt.xlabel("Cell area (µm^2)")
+    plt.title("S1HL Cell area (µm^2)")
+
+    current_values = plt.gca().get_yticks()
+    plt.gca().set_yticklabels([f"{x:.1e}" for x in current_values])
+    if visualisation_flag:
+        plt.show()
+    elif output_path is not None and save_plot_flag:
+        plt.savefig(output_path, dpi=150)

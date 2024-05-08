@@ -43,7 +43,7 @@ def cmd_depth(
     image_to_exlude_path,
 ):
     """
-    Compute cell densities as function of brain depth 
+    Compute cell densities as function of brain depth
     """
     config = configparser.ConfigParser()
     config.sections()
@@ -54,23 +54,25 @@ def cmd_depth(
     try:
         cell_position_file_prefix = config["BATCH"]["cell_position_file_prefix"]
     except KeyError:
-        cell_position_file_prefix = 'Features_'
+        cell_position_file_prefix = "Features_"
 
     points_annotations_path = config["BATCH"]["points_annotations_path"]
-    
+
     try:
-        points_annotations_file_prefix = config["BATCH"]["points_annotations_file_prefix"]
+        points_annotations_file_prefix = config["BATCH"][
+            "points_annotations_file_prefix"
+        ]
     except KeyError:
-        points_annotations_file_prefix = ''
+        points_annotations_file_prefix = ""
 
     s1hl_path = config["BATCH"]["s1hl_path"]
-    
+
     try:
         s1hl_file_prefix = config["BATCH"]["s1hl_file_prefix"]
     except KeyError:
-        s1hl_file_prefix = ''
+        s1hl_file_prefix = ""
 
-    thickness_cut = float(config["BATCH"]["thickness_cut"])
+    thickness_cut = int(config["BATCH"]["thickness_cut"])
     nb_row = int(config["BATCH"]["nb_row"])
     nb_col = int(config["BATCH"]["nb_col"])
 
@@ -81,8 +83,6 @@ def cmd_depth(
         image_to_exlude_path,
         visualisation_flag,
         save_plot_flag,
-        compute_per_depth=True,
-        compute_per_layer=False,
         points_annotations_path=points_annotations_path,
         points_annotations_file_prefix=points_annotations_file_prefix,
         s1hl_path=s1hl_path,
@@ -109,7 +109,7 @@ def cmd_layer(
     image_to_exlude_path,
 ):
     """
-    Compute cell densities per brain layer 
+    Compute cell densities per brain layer
     """
     config = configparser.ConfigParser()
     config.sections()
@@ -121,8 +121,8 @@ def cmd_layer(
     try:
         cell_position_file_prefix = config["BATCH"]["cell_position_file_prefix"]
     except KeyError:
-        cell_position_file_prefix = 'Features_'
-    
+        cell_position_file_prefix = "Features_"
+
     try:
         alpha = int(config["BATCH"]["alpha"])
     except KeyError:
@@ -131,14 +131,12 @@ def cmd_layer(
     try:
         meta_df_path = config["BATCH"]["meta_df_path"]
     except KeyError:
-        meta_df_path=None
+        meta_df_path = None
 
     try:
         animal_id = config["BATCH"]["animal_id"]
     except KeyError:
-        animal_id=None
-
-    print(f'DEBUG animal_id {animal_id}')
+        animal_id = None
 
     multiple_image_process_per_layer(
         cell_position_path,
@@ -154,15 +152,15 @@ def cmd_layer(
 
 
 def multiple_image_process_per_layer(
-        cell_position_path,
-        cell_position_file_prefix,
-        output_path,
-        image_to_exlude_path,
-        visualisation_flag,
-        save_plot_flag,
-        meta_df_path=None,
-        animal_id=None,
-        alpha=0,
+    cell_position_path,
+    cell_position_file_prefix,
+    output_path,
+    image_to_exlude_path,
+    visualisation_flag,
+    save_plot_flag,
+    meta_df_path=None,
+    animal_id=None,
+    alpha=0,
 ):
     """
     loop over image and execute single_image_process for each image
@@ -177,10 +175,11 @@ def multiple_image_process_per_layer(
     """
     # List images to compute
     image_path_list = glob.glob(cell_position_path + "/*.csv")
-
+    animal_frames = []
     if meta_df_path and animal_id:
+
         meta_df = pd.read_csv(meta_df_path, index_col=0)
-        animal_df = meta_df[meta_df['Project_ID'] == animal_id]
+        animal_df = meta_df[meta_df["Project_ID"] == animal_id]
         animal_images = animal_df.Image_Name.to_list()
 
     image_list = []
@@ -189,7 +188,7 @@ def multiple_image_process_per_layer(
         prefix_pos = path.rfind(cell_position_file_prefix)
         if prefix_pos > -1:
             feature_pos = path.rfind(cell_position_file_prefix) + feature_str_length
-            image_name = path[feature_pos: path.find(".csv")]
+            image_name = path[feature_pos : path.find(".csv")]
             find_animal = True
             if animal_id:
                 find_animal = False
@@ -219,17 +218,17 @@ def multiple_image_process_per_layer(
 
         # Some image may be keep if we only compute the density per layer
         df_image_to_exclude = df_image_to_exclude[
-            df_image_to_exclude[
-                "Exclusion reason (Cell density calculation)"
-            ].str.find("DistanceToMidline_3.05-3.25")
+            df_image_to_exclude["Exclusion reason (Cell density calculation)"].str.find(
+                "DistanceToMidline_3.05-3.25"
+            )
             == -1
-            ]
-        print(f'DEBUG len(df_image_to_exclude), {len(df_image_to_exclude)}')
+        ]
+        print(f"DEBUG len(df_image_to_exclude), {len(df_image_to_exclude)}")
 
     for image_name in image_list:
         print("INFO: Process single image ", image_name)
         cell_position_file_path = (
-                cell_position_path + "/" + cell_position_file_prefix + image_name + ".csv"
+            cell_position_path + "/" + cell_position_file_prefix + image_name + ".csv"
         )
 
         per_layer_dataframe = single_image_process_per_layer(
@@ -242,6 +241,7 @@ def multiple_image_process_per_layer(
             save_plot_flag=save_plot_flag,
             alpha=alpha,
         )
+        animal_frames.append(per_layer_dataframe)
 
         if per_layer_dataframe is None:
             print(
@@ -250,7 +250,7 @@ def multiple_image_process_per_layer(
             )
         else:
             densities_per_layer_dataframe_full_path = (
-                    output_path + "/" + image_name + "_per_layer.csv"
+                output_path + "/" + image_name + "_per_layer.csv"
             )
             write_dataframe_to_file(
                 per_layer_dataframe, densities_per_layer_dataframe_full_path
@@ -259,6 +259,19 @@ def multiple_image_process_per_layer(
                 f"INFO: Write density per layer dataframe to \
              {densities_per_layer_dataframe_full_path}"
             )
+
+    if meta_df_path and animal_id:
+        animal_df = pd.concat(animal_frames, ignore_index=True, axis=0).mean(axis=0)
+        animal_per_layer_dataframe_full_path = output_path + animal_id + "_per_layer.csv"
+        write_dataframe_to_file(
+            animal_df, animal_per_layer_dataframe_full_path
+        )
+        print(
+            f"INFO: Write density per layer for animal {animal_id} dataframe to \
+         {animal_per_layer_dataframe_full_path}"
+        )
+
+
 
 
 def multiple_image_process_per_depth(
@@ -272,8 +285,6 @@ def multiple_image_process_per_depth(
     points_annotations_file_prefix=None,
     s1hl_path=None,
     s1hl_file_prefix=None,
-    compute_per_depth=False,
-    compute_per_layer=False,
     nb_col=20,
     nb_row=20,
     thickness_cut=50,
@@ -285,8 +296,6 @@ def multiple_image_process_per_depth(
         cell_position_file_prefix: (str)
         output_path: (str)
         image_to_exlude_path: (str)
-        compute_per_depth: (bool)
-        compute_per_layer: (bool)
         points_annotations_path: (str)
         points_annotations_file_prefix: (str)
         s1hl_path: (str)
@@ -341,11 +350,7 @@ def multiple_image_process_per_depth(
             + "_points_annotations.csv"
         )
         s1hl_file_path = (
-            s1hl_path
-            + "/"
-            + s1hl_file_prefix
-            + image_name
-            + "_S1HL_annotations.csv"
+            s1hl_path + "/" + s1hl_file_prefix + image_name + "_S1HL_annotations.csv"
         )
 
         densities_dataframe = single_image_process_per_depth(
@@ -370,9 +375,5 @@ the per depth density"
         else:
             densities_dataframe_full_path = output_path + "/" + image_name + ".csv"
 
-            write_dataframe_to_file(
-                densities_dataframe, densities_dataframe_full_path
-            )
-            print(
-                f"INFO: Write density dataframe =to {densities_dataframe_full_path}"
-            )
+            write_dataframe_to_file(densities_dataframe, densities_dataframe_full_path)
+            print(f"INFO: Write density dataframe =to {densities_dataframe_full_path}")

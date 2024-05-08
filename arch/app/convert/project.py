@@ -41,7 +41,7 @@ def cmd(
     qupath_project_path,
 ):
     """
-    Convert QuPath project metadata top pandfas dataframe
+    Convert QuPath project metadata top pandas dataframe
     """
 
     os.makedirs(output_path, exist_ok=True)

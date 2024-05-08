@@ -157,6 +157,7 @@ def compute_depth_density(
 
     return densities_dataframe
 
+
 def single_image_process_per_layer(
     image_name,
     cell_position_file_path,
@@ -213,6 +214,7 @@ def single_image_process_per_layer(
         per_layer_dataframe = pd.DataFrame([layers_densities], columns=layers)
 
     return per_layer_dataframe
+
 
 def single_image_process_per_depth(
     image_name,

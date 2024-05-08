@@ -169,7 +169,7 @@ ed: 50 µm: Nearby detection counts
 
 
 4. Compute the  cell densities  as function of brain depth
-   - modify ./Config/linux/batch_density_depth with your configuration
+   - modify ./Config/batch_density_depth with your configuration
      - execute the following python script
    ```shell
    $  pyarch density-per-depth --config-file-path ./Config/batch_density_depth.ini
@@ -182,17 +182,24 @@ ed: 50 µm: Nearby detection counts
    ```
 
 6. Compute the  cell densities  by layer (L2 and L3 merged)
-   - modify ./Config/linux/batch_density_layer_merged.ini with your configuration
+   - modify ./Config/batch_density_layer_merged.ini with your configuration
    - execute the following python script
    ```shell
    $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merged.ini
    ```
 7. Compute the  cell densities  by layer (L2 and L3 distinguished)
-   - modify ./Config/linux/batch_density_layer_distinguish.ini with your configuration
+   - modify ./Config/batch_density_layer_distinguish.ini with your configuration
    - execute the following python script
-```shell
-$  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
-```
+   ```shell
+   $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
+    ```
+
+8. Prepare dataset for the cell size figures
+   - modify ./Config/batch_size with your configuration
+   - execute the following python script
+   ```shell
+   $  pyarch cell_size --config-file-path ./Config/batch_size.ini  
+   ```
 
 ### In a single pipeline command:
 - Edit the configuration file as described above.
@@ -202,16 +209,18 @@ $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_dist
   - FIGURE_PATH
 - execute the pipeline.sh command:
 ```shell
-$  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
+$  pipelne.sh
 ```
 ## Figures Howto
 
-### By hemisphere figures
+### Producing paper's figures
 To produce the by hemisphere figures, a csv file is required:
- - edit the data/metadata.csv.
+- edit the data/metadata.csv
+ 
  - execute the following python script 
    ```shell
-      pipelne.sh
+      python figures_script/cells_density.ini
+      python figures_script/cells_size.py CELL_SIZE_OUTPUT_PATH/cells_area.csv output_file_path
    ```
 
 
