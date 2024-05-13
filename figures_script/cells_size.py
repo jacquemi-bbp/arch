@@ -21,19 +21,23 @@ import pandas as pd
 from arch.visualisation import plots_cells_size_per_layers, plots_cells_size
 
 
-if __name__ == '__main__':
-
-    if len(sys.argv) < 3 or len(sys.argv) > 4 :
-        print('usage: python cell_size.py cell_area_dataframe_path output_directory_path [per_layer]')
+if __name__ == "__main__":
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        print(
+            "usage: python cell_size.py cell_area_dataframe_path output_directory_path [per_layer]"
+        )
         sys.exit()
-        
-    
-    cell_area_dataframe_path = sys.argv[1]    
-    output_figure_path = sys.argv[2]  
+
+    cell_area_dataframe_path = sys.argv[1]
+    output_figure_path = sys.argv[2]
     area_dataframe = pd.read_csv(cell_area_dataframe_path)
 
-    if  len(sys.argv) == 4 and sys.argv[3] == 'per_layer' :
+    if len(sys.argv) == 4 and sys.argv[3] == "per_layer":
         plots_cells_size_per_layers(area_dataframe, output_path=output_figure_path)
     else:
-        plots_cells_size(area_dataframe, output_path=output_figure_path, save_plot_flag=True,
-                          visualisation_flag=False)
+        plots_cells_size(
+            area_dataframe,
+            output_path=output_figure_path,
+            save_plot_flag=True,
+            visualisation_flag=False,
+        )

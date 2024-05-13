@@ -16,16 +16,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import configparser
+
 import click
 
 from arch.convert import single_image_conversion
 from arch.io import (
-    # write_dataframe_to_file,
     list_images,
-    # get_qpproject_images_metadata,
-    # save_dataframe
-    # _without_space_in_path,
-)
+)  # write_dataframe_to_file,; get_qpproject_images_metadata,; save_dataframe; _without_space_in_path,
 
 
 @click.command()

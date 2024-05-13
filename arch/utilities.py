@@ -19,6 +19,7 @@ Utilities module
 
 
 import random
+
 from sklearn.neighbors import NearestNeighbors
 
 
@@ -41,7 +42,6 @@ def stereology_exclusion(dataframe):
     )
 
     def exclude(sample, slice_thickness=50):
-
         sample["neighbors"] = nbrs.kneighbors(data, 6, return_distance=False)[
             sample.name, :
         ]  # sample.name = row index

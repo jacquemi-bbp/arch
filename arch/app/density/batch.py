@@ -23,7 +23,7 @@ import os
 import click
 import pandas as pd
 
-from arch.density import single_image_process_per_layer, single_image_process_per_depth
+from arch.density import single_image_process_per_depth, single_image_process_per_layer
 from arch.io import write_dataframe_to_file
 
 
@@ -177,7 +177,6 @@ def multiple_image_process_per_layer(
     image_path_list = glob.glob(cell_position_path + "/*.csv")
     animal_frames = []
     if meta_df_path and animal_id:
-
         meta_df = pd.read_csv(meta_df_path, index_col=0)
         animal_df = meta_df[meta_df["Project_ID"] == animal_id]
         animal_images = animal_df.Image_Name.to_list()
@@ -262,16 +261,14 @@ def multiple_image_process_per_layer(
 
     if meta_df_path and animal_id:
         animal_df = pd.concat(animal_frames, ignore_index=True, axis=0).mean(axis=0)
-        animal_per_layer_dataframe_full_path = output_path + animal_id + "_per_layer.csv"
-        write_dataframe_to_file(
-            animal_df, animal_per_layer_dataframe_full_path
+        animal_per_layer_dataframe_full_path = (
+            output_path + animal_id + "_per_layer.csv"
         )
+        write_dataframe_to_file(animal_df, animal_per_layer_dataframe_full_path)
         print(
             f"INFO: Write density per layer for animal {animal_id} dataframe to \
          {animal_per_layer_dataframe_full_path}"
         )
-
-
 
 
 def multiple_image_process_per_depth(

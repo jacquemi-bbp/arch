@@ -18,13 +18,13 @@ visualisation module
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from math import pi
-import matplotlib.pyplot as plt
+
 import matplotlib
-from matplotlib.lines import Line2D
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.lines import Line2D
 
 from arch.geometry import compute_cells_polygon_level
-
 
 # plt.rcParams["font.family"] = "Arial"
 layers_color = {
@@ -419,6 +419,7 @@ class AnchoredHScaleBar(matplotlib.offsetbox.AnchoredOffsetbox):
     """size: length of bar in data units
     extent : height of bar ends in axes unit
     """
+
     def __init__(
         self,
         size=1,
@@ -462,8 +463,7 @@ class AnchoredHScaleBar(matplotlib.offsetbox.AnchoredOffsetbox):
         )
 
 
-def plots_cells_size_per_layers(
-    area_dataframe, output_path=None):
+def plots_cells_size_per_layers(area_dataframe, output_path=None):
     """
     Make a histogram that represent the cell mean diameters (um) by layer
     Args:
@@ -503,7 +503,7 @@ def plots_cells_size_per_layers(
         frameon=False,
         pad=0,
         sep=5,
-        linekw={"color": 'black'},
+        linekw={"color": "black"},
     )
 
     axes[5].add_artist(scalebar)
