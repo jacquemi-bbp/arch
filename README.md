@@ -73,7 +73,6 @@ $ pip install .
 
 
 
-
 ##  Pipeline data inputs
 ### Data inputs and model used during the cells detection step:
 - The images of tissue stained with the classical cresyl violet.
