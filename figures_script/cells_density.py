@@ -16,14 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from collections import defaultdict
 import glob
 import os
 import sys
+from collections import defaultdict
 
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
 # Customize matplotlib
 matplotlib.rcParams.update(
     {
@@ -34,11 +35,11 @@ matplotlib.rcParams.update(
 )
 import pandas as pd
 import seaborn as sns
-from shapely import Polygon
 from PIL import ImageColor
+from shapely import Polygon
+
 
 def get_color(distiguish=True, return_type="dict", return_unit="hex"):
-
     if distiguish:
         layers_color = {
             "Layer 1": "#ff0000",
@@ -95,7 +96,6 @@ def get_per_layer_df(path):
         dfs.append(df)
     layer_df = pd.concat(dfs)
     return layer_df
-
 
 
 def concate_density_dataframes(file_list, std_dev_factor=1):
@@ -290,18 +290,17 @@ def plot_density_per_layer(
         plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
 
 
-if __name__ == '__main__':
-
-    
-
+if __name__ == "__main__":
     if len(sys.argv) < 5 or len(sys.argv) > 6:
-        print('usage: python cell_density.py per_depth_path per_layer_merged_path per_layer_distinguish_path\
-        output_figure_path [metadata_file_path]')
+        print(
+            "usage: python cell_density.py per_depth_path per_layer_merged_path per_layer_distinguish_path\
+        output_figure_path [metadata_file_path]"
+        )
         sys.exit()
 
     if len(sys.argv) == 5 or len(sys.argv) == 6:
-        per_depth_path = sys.argv[1] 
-        per_layer_merged_path = sys.argv[2] 
+        per_depth_path = sys.argv[1]
+        per_layer_merged_path = sys.argv[2]
         per_layer_distinguish_path = sys.argv[3]
         output_figure_path = sys.argv[4]
 
@@ -309,24 +308,21 @@ if __name__ == '__main__':
         metadata_file_path = sys.argv[5]
     else:
         metadata_file_path = None
-    
 
-    print(f'per_depth_path {per_depth_path}')
-    print(f'per_layer_merged_path {per_layer_merged_path}')
-    print(f'per_layer_distinguish_path {per_layer_distinguish_path}')
-    print(f'output_figure_path {output_figure_path}')
-    print(f'metadata_file_path {metadata_file_path}')
-
+    print(f"per_depth_path {per_depth_path}")
+    print(f"per_layer_merged_path {per_layer_merged_path}")
+    print(f"per_layer_distinguish_path {per_layer_distinguish_path}")
+    print(f"output_figure_path {output_figure_path}")
+    print(f"metadata_file_path {metadata_file_path}")
 
     file_list = glob.glob(per_depth_path + "/*.csv")
     density_df = concate_density_dataframes(file_list)
-
 
     print(f"The dataframe contains {np.unique(density_df.image).size} images")
     try:
         os.makedirs(output_figure_path)
     except OSError as error:
-        pass 
+        pass
 
     # Cell densities as function of brain depth
     data = dataframe_to_array(density_df)
@@ -335,9 +331,8 @@ if __name__ == '__main__':
         "Cell density as a function of SSCX region percentage of depth.",
         plot_median=True,
         plt_detail=False,
-        output_path= output_figure_path + "/median_density_percentage.svg",
+        output_path=output_figure_path + "/median_density_percentage.svg",
     )
-
 
     print(f"Plot {np.unique(density_df.image).size} images included the data")
     plot(
@@ -346,7 +341,6 @@ if __name__ == '__main__':
         plt_detail=True,
         output_path=output_figure_path + "/full_density_percentage.svg",
     )
-
 
     print(f"Plot {np.unique(density_df.image).size} images included the data")
     plot_mean_and_std_dev(
@@ -362,12 +356,10 @@ if __name__ == '__main__':
         left_meta_df = analyse_df[analyse_df["hemisphere(L/R)"] == "left"]
         right_meta_df = analyse_df[analyse_df["hemisphere(L/R)"] == "right"]
 
-
         left_image_id = list(left_meta_df["Image_Name"])
         right_image_id = list(right_meta_df["Image_Name"])
         left_density_df = get_filtered_density_df(left_image_id, density_df)
         right_density_df = get_filtered_density_df(right_image_id, density_df)
-
 
         data = dataframe_to_array(left_density_df)
         print(
@@ -380,7 +372,6 @@ if __name__ == '__main__':
             output_path=output_figure_path + "/left_density_percentage.svg",
         )
 
-
         data = dataframe_to_array(right_density_df)
         print(
             f"Plot {np.unique(right_density_df.image).size} images included the right_density_df"
@@ -391,7 +382,6 @@ if __name__ == '__main__':
             plt_detail=True,
             output_path=output_figure_path + "/right_std_density_percentage.svg",
         )
-
 
         print(
             f"Plot {np.unique(left_density_df.image).size} images included the left_density_df"
@@ -407,9 +397,7 @@ if __name__ == '__main__':
             output_path=output_figure_path + "/left_right_std_density_percentage.svg",
         )
 
-
         project_ID_list = np.unique(analyse_df["Project_ID"])
-
 
         for project_id in project_ID_list:
             animal_meta_df = analyse_df[analyse_df["Project_ID"] == project_id]
@@ -427,9 +415,7 @@ if __name__ == '__main__':
                 output_path=f"{output_figure_path}/{project_id}_std_density_percentage.svg",
             )
 
-
         animal_ID_list = ["ProjectQuPath"]
-
 
         animal_df_list = []
         for project_id in animal_ID_list:
@@ -437,9 +423,7 @@ if __name__ == '__main__':
             animal_image_id = list(animal_meta_df["Image_Name"])
             animal_df_list.append(get_filtered_density_df(animal_image_id, density_df))
 
-
         animal_df = pd.concat(animal_df_list)
-
 
         data = dataframe_to_array(animal_df)
         plot_mean_and_std_dev(
@@ -453,14 +437,12 @@ if __name__ == '__main__':
             output_path=f"{output_figure_path}/animal_01413828_density_df_std_density_percentage.svg",
         )
 
-
     ## Cell density mean value per image cells/mm3
 
     nb_images = len(density_df[density_df.depth_percentage == 0.00])
     print(
         f"mean density on {nb_images} images => {density_df.densities.mean():.2f} cells/mm3"
     )
-
 
     # Cell densities per layers
 
@@ -475,11 +457,9 @@ if __name__ == '__main__':
         distiguish=False,
     )
 
-
     ## Distinguish Layer 2 and 3
     path_d = per_layer_distinguish_path
     d_layer_df = get_per_layer_df(path_d)
-
 
     print(f"Plot {len(d_layer_df)} images included the d_layer_df")
     plot_density_per_layer(

@@ -84,10 +84,10 @@ if (entryMetadata['Analyze'] == 'True') {
 
     def qupath = getQuPath()
     if (qupath != null) {
-        
+
         def available = qupath.getAvailablePathClasses()
 
-    
+
         def pathClasses = [layers, colors].transpose().collect{ name, color ->
             def newClass = PathClassFactory.getPathClass(name)
             newClass.setColor(color)
@@ -113,7 +113,7 @@ if (entryMetadata['Analyze'] == 'True') {
             .measureIntensity()          // Add cell measurements (in all compartments)
             .classify("Cellpose Julie Full")
             .build()
-            
+
     println "cellpose $cellpose"
 
     // Run detection for the selected objects

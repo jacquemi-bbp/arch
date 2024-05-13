@@ -17,27 +17,25 @@ QuPath porcessing for rat somatosensory cortex Nissl data module
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import pandas as pd
 import alphashape
 import numpy as np
+import pandas as pd
 from shapely.geometry.multipolygon import MultiPolygon
 
 from arch.geometry import (
+    count_nb_cell_per_polygon,
     create_depth_polygons,
     create_grid,
-    count_nb_cell_per_polygon,
-    get_inside_points,
     get_bigger_polygon,
+    get_inside_points,
 )
-
-from arch.utilities import get_image_to_exlude_list
 from arch.io import get_cells_coordinate
-
+from arch.utilities import get_image_to_exlude_list
 from arch.visualisation import (
     plot_densities,
-    plot_split_polygons_and_cell_depth,
     plot_densities_by_layer,
     plot_layers,
+    plot_split_polygons_and_cell_depth,
 )
 
 # pylint: disable=too-many-arguments

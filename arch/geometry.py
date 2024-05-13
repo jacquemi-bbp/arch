@@ -18,12 +18,12 @@ Geometry module that contains geometric functions
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from math import sqrt
-import numpy as np
 
-from shapely.geometry import Point, LineString, Polygon, MultiLineString
-from shapely.ops import split
-from shapely.geometry.multipolygon import MultiPolygon
+import numpy as np
 from shapely import geometry
+from shapely.geometry import LineString, MultiLineString, Point, Polygon
+from shapely.geometry.multipolygon import MultiPolygon
+from shapely.ops import split
 
 
 def distance(pt1, pt2):

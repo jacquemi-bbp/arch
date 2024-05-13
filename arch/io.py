@@ -17,12 +17,14 @@ Read / Write files modules
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import glob
+
 # from os import listdir, makedirs
 # from os.path import isfile, join
 from collections import defaultdict
-import glob
-import numpy as np
+
 import geojson
+import numpy as np
 
 # import pandas as pd
 # import openpyxl
@@ -99,14 +101,13 @@ def read_qupath_annotations(directory_path, image_name):
                             value = entry["geometry"]["coordinates"]
                             annotations[key] = np.array(value)
                         except ValueError:
-                        # Because of miss created annotation by user, some QuPath annotation type
-                        # are not simple polygon, but ROI (composition of several polygons.
-                        # In this case, we get the bigger polygon and do noy used the other
-                        # Because of miss created annotation by user, some QuPath annotation type
-                        # are not simple polygon, but ROI (composition of several polygons.
-                        # In this case, we get the bigger polygon and do noy used the other
+                            # Because of miss created annotation by user, some QuPath annotation type
+                            # are not simple polygon, but ROI (composition of several polygons.
+                            # In this case, we get the bigger polygon and do noy used the other
+                            # Because of miss created annotation by user, some QuPath annotation type
+                            # are not simple polygon, but ROI (composition of several polygons.
+                            # In this case, we get the bigger polygon and do noy used the other
                             if len(value[0]) == 1 and len(value[1]) == 1:
-
                                 #    --
                                 #    | |
 
@@ -116,7 +117,6 @@ def read_qupath_annotations(directory_path, image_name):
                                 #    -----
                                 max_len = 0
                                 for entry in value:
-
                                     if len(entry) > max_len:
                                         max_len = len(entry)
                                         print(f"max_len = {max_len}")

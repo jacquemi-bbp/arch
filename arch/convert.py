@@ -18,12 +18,11 @@ Convert QuPath Detections and annotation to pandas dataframe
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-from numpy import random
-import pandas as pd
 
-from arch.io import (
-    read_qupath_annotations,
-)
+import pandas as pd
+from numpy import random
+
+from arch.io import read_qupath_annotations
 from arch.utilities import stereology_exclusion
 
 

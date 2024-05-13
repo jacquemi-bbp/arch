@@ -96,7 +96,7 @@ $ pip install .
   - detected cells features (csv file) containing the lofflwing features: Image	Object ID	Object type	Name	Classification	Parent	ROI	Centroid X µm	Centroid Y µm	Area µm^2	Length µm	Circul
 arity	Solidity	Max diameter µm	Min diameter µm	Hematoxylin: Mean	Hematoxylin: Median	Hematoxylin: Min	Hematoxylin: Max	Hematoxylin: Std.Dev.	DAB: Mean	DAB: Median	DAB: Min	DAB: Max	DAB: Std.Dev.	Distance to annotation with S1HL µm	Distan
 ce to annotation with Outside Pia µm	Distance to annotation with SliceContour µm	Delaunay: Num neighbors	Delaunay: Mean distance	Delaunay: Medi
-an distance	Delaunay: Max distance	Delaunay: Min distance	Delaunay: Mean triangle area	Delaunay: Max triangle area	Smoothed: 50 µm: Area 
+an distance	Delaunay: Max distance	Delaunay: Min distance	Delaunay: Mean triangle area	Delaunay: Max triangle area	Smoothed: 50 µm: Area
 µm^2	Smoothed: 50 µm: Length µm	Smoothed: 50 µm: Circularity	Smoothed: 50 µm: Solidity	Smoothed: 50 µm: Max diameter µm	Smooth
 ed: 50 µm: Min diameter µm	Smoothed: 50 µm: Hematoxylin: Mean	Smoothed: 50 µm: Hematoxylin: Median	Smoothed: 50 µm: Hematoxylin: Min	Smoothed: 50 µm: Hematoxylin: Max	Smoothed: 50 µm: Hematoxylin: Std.Dev.	Smoothed: 50 µm: DAB: Mean	Smoothed: 50 µm: DAB: Median	Smooth
 ed: 50 µm: DAB: Min	Smoothed: 50 µm: DAB: Max	Smoothed: 50 µm: DAB: Std.Dev.	Smoothed: 50 µm: Distance to annotation with S1HL µm	Smooth
@@ -198,7 +198,7 @@ ed: 50 µm: Nearby detection counts
    - modify ./Config/batch_size with your configuration
    - execute the following python script
    ```shell
-   $  pyarch cell_size --config-file-path ./Config/batch_size.ini  
+   $  pyarch cell_size --config-file-path ./Config/batch_size.ini
    ```
 
 ### In a single pipeline command:
@@ -216,8 +216,8 @@ $  pipelne.sh
 ### Producing paper's figures
 To produce the by hemisphere figures, a csv file is required:
 - edit the data/metadata.csv
- 
- - execute the following python script 
+
+ - execute the following python script
    ```shell
       python figures_script/cells_density.ini
       python figures_script/cells_size.py CELL_SIZE_OUTPUT_PATH/cells_area.csv output_file_path
@@ -234,5 +234,3 @@ For licence and authors, see `LICENSE.txt` and `AUTHORS.md` respectively.
 
 
 Copyright © 2022 Blue Brain Project/EPFL
-
-

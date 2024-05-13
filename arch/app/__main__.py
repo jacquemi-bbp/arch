@@ -22,13 +22,13 @@ Processing for rat somatosensory cortex QuPath Nissl data
 import logging
 
 import click
-from arch.app.logger import setup_logging
+
+from arch.app.cell_size.batch import cmd as batch_cell_size
 from arch.app.convert.batch import cmd as batch_convert
 from arch.app.convert.project import cmd as project_convert
-from arch.app.density.batch import cmd_layer as batch_density_layer
 from arch.app.density.batch import cmd_depth as batch_density_depth
-from arch.app.cell_size.batch import cmd as batch_cell_size
-
+from arch.app.density.batch import cmd_layer as batch_density_layer
+from arch.app.logger import setup_logging
 from arch.version import VERSION
 
 

@@ -17,11 +17,11 @@
 
 
 import os
+
 import click
 import pandas as pd
-from arch.io import (
-    get_qpproject_images_metadata,
-)
+
+from arch.io import get_qpproject_images_metadata
 
 
 @click.command()
