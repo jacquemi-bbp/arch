@@ -4,7 +4,7 @@ Jean Jacquemier (@jacquemi)
 
 # Contributors
 
-* Olivier Burri 
+* Olivier Burri
 * Nicolas Frank
-* Jean Jacquemier  
+* Jean Jacquemier
 * Csaba Zzsolnai

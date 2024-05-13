@@ -17,9 +17,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
-import pandas as pd
-from arch.visualisation import plots_cells_size_per_layers, plots_cells_size
 
+import pandas as pd
+
+from arch.visualisation import plots_cells_size, plots_cells_size_per_layers
 
 if __name__ == "__main__":
     if len(sys.argv) < 3 or len(sys.argv) > 4:

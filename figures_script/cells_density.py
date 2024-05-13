@@ -16,14 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from collections import defaultdict
 import glob
 import os
 import sys
+from collections import defaultdict
 
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Customize matplotlib
 matplotlib.rcParams.update(
@@ -35,8 +35,8 @@ matplotlib.rcParams.update(
 )
 import pandas as pd
 import seaborn as sns
-from shapely import Polygon
 from PIL import ImageColor
+from shapely import Polygon
 
 
 def get_color(distiguish=True, return_type="dict", return_unit="hex"):
