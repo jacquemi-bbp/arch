@@ -233,7 +233,7 @@ ed: 50 µm: Nearby detection counts
   - FIGURE_PATH
 - execute the pipeline.sh command:
 ```shell
-$  pipelne.sh
+$  pipeline.sh
 ```
 ## Figures Howto
 
