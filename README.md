@@ -38,11 +38,11 @@ alongside a few QuPath annotations made by experts and metadata in a CSV file, t
 <img src="docs/source/images/per_layer_distinguish_23.png" alt="per_layer_distinguish_23.png" width="200"/>
 
 
-## The pipeline consists of two main steps:
+### The pipeline consists of two main steps:
 1. With the assistance of QuPath (a third-party application), perform cell detection and export cell features and annotations.
 2. Process the data exported by QuPath in the previous step to compute the boundaries of the layers and cell densities."
 
-## Lexicon
+### Lexicon
 The following definitions will stay in effect throughout the code.
 - Annotation: QuPath annotation
 - ML: Machine learning
