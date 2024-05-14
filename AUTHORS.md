@@ -1,9 +1,4 @@
-# Maintainer
-
-Jean Jacquemier (@jacquemi)
-
-# Contributors
-
+* Jean Jacquemier
 * Olivier Burri
 * Nicolas Frank
 * Jean Jacquemier
