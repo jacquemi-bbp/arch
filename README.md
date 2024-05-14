@@ -257,4 +257,4 @@ The development of this software was supported by funding to the Blue Brain Proj
 For licence and authors, see `LICENSE.txt` and `AUTHORS.md` respectively.
 
 
-Copyright © 2022 Blue Brain Project/EPFL
+Copyright © 2022-2024 Blue Brain Project/EPFL
