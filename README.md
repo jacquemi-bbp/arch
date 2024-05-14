@@ -15,7 +15,7 @@ Automated Recognition and Classification of Histological layers.
 Machine learning for histological annotation and quantification of cortical layers pipeline
 
 
-## Main usage
+## Introduction
 This pipeline automatically detects brain cells, classifies them by brain layer and computes cell density. It has been utilized for rat somatosensory cortex Nissl microscopy images, provided by the EPFL LNMC laboratory.
 
 Utilizing images of tissue stained with the classical cresyl violet, imported into  QuPath projects,
@@ -50,7 +50,31 @@ The following definitions will stay in effect throughout the code.
 - S1HL: The rat Hindlimb Somatosensory
 
 
+Citation
+========
 
+When you use the arch software or method for your research, we ask you to cite the following publication (**this includes poster presentations**):
+
+Meystre J, Jacquemier J, Bürri O, Zsolnai C, Frank N,  Perin R, Keller D, Markram H (2024). Machine learning for histological annotation and quantification of cortical layers. doi:  journal link
+
+.. code-block:: 
+
+	@ARTICLE{arch,
+	AUTHOR={AUTHORS},   
+	TITLE={arch: Machine learning for histological annotation and quantification of cortical layers},
+	JOURNAL={X},
+	VOLUME={XX},
+	YEAR={2024},
+	NUMBER={XX},
+	URL={http://},
+	DOI={XX.XXXX/fninf.XXXX.XXXXX},
+	ISSN={XXXX-XXXX}
+	}
+
+
+Publications that use or mention arch
+==========================================
+The list of publications that use or mention arch can be found on `the github wiki page <https://github.com/BlueBrain/arch/wiki/Publications-that-use-or-mention-arch>`_.
 
 
 ## Install
