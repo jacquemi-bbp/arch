@@ -20,7 +20,7 @@ setup(
         "Programming Language :: Python :: 3.11",
     ],
     description="Machine learning for histological annotation and quantification of cortical layers pipeline",
-    author="Jean Jacquemier",
+    author="Blue Brain Project, EPFL",
     version=VERSION,
     install_requires=requirements,
     packages=find_packages(),
