@@ -53,7 +53,7 @@ The following definitions will stay in effect throughout the code.
 
 
 
-## Installation
+## Install
 - QuPath: https://qupath.github.io/
 - cellpose: https://cellpose.readthedocs.io/en/latest/
 - QuPath cellpose extension https://github.com/BIOP/qupath-extension-cellpose
@@ -131,7 +131,7 @@ ed: 50 µm: Nearby detection counts
 
 
 
-## Pipeline How To
+## Examples
 
 ### Step by step:
 
