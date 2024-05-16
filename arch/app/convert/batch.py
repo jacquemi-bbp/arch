@@ -15,14 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import configparser
 
 import click
 
 from arch.convert import single_image_conversion
-from arch.io import (
-    list_images,
-)  # write_dataframe_to_file,; get_qpproject_images_metadata,; save_dataframe; _without_space_in_path,
+from arch.io import list_images
+from arch.utilities import get_config
 
 
 @click.command()
@@ -33,32 +31,15 @@ def cmd(config_file_path):
     Args:
         config-file-path (str): The configuration file path
     """
-    config = configparser.ConfigParser()
-    config.sections()
-    config.read(config_file_path)
-
-    try:
-        input_detection_directory = config["BATCH"]["input_detection_directory"]
-        cell_position_suffix = config["BATCH"]["cell_position_suffix"].replace('"', "")
-    except KeyError:
-        input_detection_directory = None
-        cell_position_suffix = None
-    try:
-        input_annotation_directory = config["BATCH"]["input_annotation_directory"]
-        annotations_geojson_suffix = config["BATCH"]["annotations_geojson_suffix"]
-    except KeyError:
-        input_annotation_directory = None
-        annotations_geojson_suffix = None
-
-    try:
-        exclude_flag = config.getboolean("BATCH", "exclude")
-    except configparser.NoOptionError:
-        exclude_flag = True
-
-    pixel_size = float(config["BATCH"]["pixel_size"])
-
-    output_path = config["BATCH"]["output_directory"]
-
+    (
+        input_detection_directory,
+        cell_position_suffix,
+        input_annotation_directory,
+        annotations_geojson_suffix,
+        exclude_flag,
+        pixel_size,
+        output_path,
+    ) = get_config(config_file_path)
     images_dictionary = list_images(
         input_detection_directory,
         cell_position_suffix,

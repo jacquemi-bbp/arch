@@ -17,10 +17,56 @@ Utilities module
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
+import configparser
 import random
 
 from sklearn.neighbors import NearestNeighbors
+
+
+def get_config(config_file_path: str):
+    """
+    read config file and return either existing entries or default values
+    Args:
+        config_file_path (str): The full path of the configuration path
+    Returns:
+        list of configuration entries
+    """
+
+    config = configparser.ConfigParser()
+    config.sections()
+    config.read(config_file_path)
+
+    try:
+        input_detection_directory = config["BATCH"]["input_detection_directory"]
+        cell_position_suffix = config["BATCH"]["cell_position_suffix"].replace('"', "")
+    except KeyError:
+        input_detection_directory = None
+        cell_position_suffix = None
+    try:
+        input_annotation_directory = config["BATCH"]["input_annotation_directory"]
+        annotations_geojson_suffix = config["BATCH"]["annotations_geojson_suffix"]
+    except KeyError:
+        input_annotation_directory = None
+        annotations_geojson_suffix = None
+
+    try:
+        exclude_flag = config.getboolean("BATCH", "exclude")
+    except configparser.NoOptionError:
+        exclude_flag = True
+
+    pixel_size = float(config["BATCH"]["pixel_size"])
+
+    output_path = config["BATCH"]["output_directory"]
+
+    return (
+        input_detection_directory,
+        cell_position_suffix,
+        input_annotation_directory,
+        annotations_geojson_suffix,
+        exclude_flag,
+        pixel_size,
+        output_path,
+    )
 
 
 def stereology_exclusion(dataframe):

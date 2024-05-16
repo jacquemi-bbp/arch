@@ -53,55 +53,49 @@ def single_image_conversion(
         cells_features_dataframe,
     ) = convert(cells_detection_path, annotations_path, image_name, pixel_size)
 
-    if cells_detection_path:
-        # Remove Cluster features if exist
-        # One removes the cluster feature because they are all the same for each cell
-        cols = [
-            c
-            for c in cells_features_dataframe.columns
-            if c.lower().find("cluster") == -1
-        ]
-        print("INFO: Remove cluster features if exist")
-        cells_features_dataframe = cells_features_dataframe[cols]
+    # Remove Cluster features if exist
+    # One removes the cluster feature because they are all the same for each cell
+    cols = [
+        c for c in cells_features_dataframe.columns if c.lower().find("cluster") == -1
+    ]
+    print("INFO: Remove cluster features if exist")
+    cells_features_dataframe = cells_features_dataframe[cols]
 
-        # START CELL EXCLUSION
-        if exclude:
-            seed = 0
-            print(f"INFO: Fix the numpy seed")
-            random.seed(seed)
-            print("INFO: Start cells exclusion")
-            cells_features_dataframe = stereology_exclusion(cells_features_dataframe)
-            nb_exclude = cells_features_dataframe["exclude_for_density"].value_counts()[
-                1
-            ]
-            print(
-                f"INFO: There are {nb_exclude} / {len(cells_features_dataframe)} excluded cells)"
-            )
-
-        # Write Cells featrues dataframe
-        cells_features_path = output_path + "/" + "Features_" + image_name + ".csv"
-        cells_features_path = cells_features_path.replace(" ", "")
-        print(f"INFO: Export cells features to {cells_features_path}")
-        cells_features_dataframe.to_csv(cells_features_path)
-
-    if annotations_path:
-        # Write annotaion dataframe
-        points_annotation_path = (
-            output_path + "/" + image_name + "_points_annotations" + ".csv"
+    # START CELL EXCLUSION
+    if exclude:
+        seed = 0
+        print(f"INFO: Fix the numpy seed")
+        random.seed(seed)
+        print("INFO: Start cells exclusion")
+        cells_features_dataframe = stereology_exclusion(cells_features_dataframe)
+        nb_exclude = cells_features_dataframe["exclude_for_density"].value_counts()[1]
+        print(
+            f"INFO: There are {nb_exclude} / {len(cells_features_dataframe)} excluded cells)"
         )
-        points_annotation_path = points_annotation_path.replace(" ", "")
-        print(f"INFO: Export points annotation to {points_annotation_path}")
-        points_annotation_dataframe.to_csv(points_annotation_path)
 
-        s1hl_path = output_path + "/" + image_name + "_S1HL_annotations" + ".csv"
-        s1hl_path = s1hl_path.replace(" ", "")
-        print(f"INFO: Export S1HL annotation to {s1hl_path}")
-        s1hl_annotation_dataframe.to_csv(s1hl_path)
+    # Write Cells featrues dataframe
+    cells_features_path = output_path + "/" + "Features_" + image_name + ".csv"
+    cells_features_path = cells_features_path.replace(" ", "")
+    print(f"INFO: Export cells features to {cells_features_path}")
+    cells_features_dataframe.to_csv(cells_features_path)
 
-        out_of_pia_path = output_path + "/" + image_name + "_out_of_pia" + ".csv"
-        out_of_pia_path = out_of_pia_path.replace(" ", "")
-        print(f"INFO: Export Out_of_pia annotation to {out_of_pia_path}")
-        out_of_pia_annotation_dataframe.to_csv(out_of_pia_path)
+    # Write annotaion dataframe
+    points_annotation_path = (
+        output_path + "/" + image_name + "_points_annotations" + ".csv"
+    )
+    points_annotation_path = points_annotation_path.replace(" ", "")
+    print(f"INFO: Export points annotation to {points_annotation_path}")
+    points_annotation_dataframe.to_csv(points_annotation_path)
+
+    s1hl_path = output_path + "/" + image_name + "_S1HL_annotations" + ".csv"
+    s1hl_path = s1hl_path.replace(" ", "")
+    print(f"INFO: Export S1HL annotation to {s1hl_path}")
+    s1hl_annotation_dataframe.to_csv(s1hl_path)
+
+    out_of_pia_path = output_path + "/" + image_name + "_out_of_pia" + ".csv"
+    out_of_pia_path = out_of_pia_path.replace(" ", "")
+    print(f"INFO: Export Out_of_pia annotation to {out_of_pia_path}")
+    out_of_pia_annotation_dataframe.to_csv(out_of_pia_path)
 
     print(f"Done ! All export dataframe saved into {output_path}")
 
