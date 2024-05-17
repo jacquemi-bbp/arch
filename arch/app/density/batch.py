@@ -222,8 +222,6 @@ def multiple_image_process_per_layer(
             )
             == -1
         ]
-        print(f"DEBUG len(df_image_to_exclude), {len(df_image_to_exclude)}")
-
     for image_name in image_list:
         print("INFO: Process single image ", image_name)
         cell_position_file_path = (

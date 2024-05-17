@@ -200,10 +200,10 @@ def cross_validate(
     kfold = RepeatedKFold(n_splits=k, n_repeats=k_repeat, random_state=42)
     scores = []
     confusion_matrices = []
-    image_names = np.array(image_names) # type: ignore
+    image_names = np.array(image_names)  # type: ignore
 
     for train_images, test_images in tqdm.tqdm(
-        kfold.split(image_names[:, np.newaxis]), total=k # type: ignore
+        kfold.split(image_names[:, np.newaxis]), total=k  # type: ignore
     ):
         # Split df in train and test.
         train_images, test_images = image_names[train_images], image_names[test_images]

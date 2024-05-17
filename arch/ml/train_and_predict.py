@@ -22,158 +22,6 @@ from arch.ml.utils import (
 
 logger = logging.getLogger(__name__)
 
-'''
-def get_parser() -> argparse.ArgumentParser:
-    """Get parser for command line arguments."""
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "train_dir",
-        type=pathlib.Path,
-        help="Directory containing training data files.",
-    )
-    parser.add_argument(
-        "save_dir",
-        type=pathlib.Path,
-        help="Directory where to save the images and the model.",
-    )
-    parser.add_argument(
-        "--model-file",
-        type=pathlib.Path,
-        default=None,
-        help=(
-            "Path to the file where to save/load the RF model. If the file doesn't"
-            " exist, the model is trained and saved at the provided location. If it"
-            " exists, loads the model and skips training."
-        ),
-    )
-    parser.add_argument(
-        "--train-glob",
-        type=str,
-        default="*.csv",
-        help="Glob pattern to match the training files.",
-    )
-    parser.add_argument(
-        "--gt-column",
-        type=str,
-        default="Expert_layer",
-        help="Name of the ground truth column in the CSVs.",
-    )
-    parser.add_argument(
-        "--distinguishable-second-layer",
-        "-d",
-        action="store_true",
-        help="Treats layer 2 and 3 as separate layers.",
-    )
-    parser.add_argument(
-        "--extension",
-        type=str,
-        default="csv",
-        choices=["txt", "csv"],
-        help="extension of the files containing the data.",
-    )
-    parser.add_argument(
-        "--random-split",
-        action="store_true",
-        help=(
-            "Use test images randomly extracted from the train set. If false, defaults"
-            " to the predefine hardcoded images."
-        ),
-    )
-    parser.add_argument(
-        "--split-ratio",
-        "-s",
-        type=float,
-        default=0.1,
-        help=(
-            "Fraction of the dataset sent to the test set. Only if using"
-            " --random-split."
-        ),
-    )
-    parser.add_argument(
-        "--estimators",
-        "-e",
-        type=int,
-        default=100,
-        help="Number of estimators for the random forest model.",
-    )
-    parser.add_argument(
-        "--clean",
-        "-c",
-        action="store_true",
-        help=(
-            "Use post-processing to attempt removing wrongly classified cluster. Can"
-            " potentially harm the prediction's quality."
-        ),
-    )
-    parser.add_argument(
-        "--eps",
-        type=float,
-        default=0.05,
-        help="Radius of the circle used in the DBSCAN algorithm for post-processing.",
-    )
-    parser.add_argument(
-        "--min-samples",
-        type=int,
-        default=3,
-        help=(
-            "Minimum number of neighbors required within eps to be treated as a central"
-            " point."
-        ),
-    )
-    parser.add_argument(
-        "--show",
-        action="store_true",
-        help="Display the figures.",
-    )
-    parser.add_argument(
-        "--pred-dir",
-        default=None,
-        type=pathlib.Path,
-        help=(
-            "Directory containing images to be predicted + glob pattern to match the"
-            " corresponding files. No prediction if not specified."
-        ),
-    )
-    parser.add_argument(
-        "--pred-save",
-        default=None,
-        type=pathlib.Path,
-        help="Where to save the CSVs containing predictions.",
-    )
-    parser.add_argument(
-        "--pred-glob",
-        type=str,
-        default="*.csv",
-        help="Glob pattern to match the prediction files.",
-    )
-    parser.add_argument(
-        "--pred-extension",
-        type=str,
-        default="csv",
-        choices=["txt", "csv"],
-        help="Extension of the files used for prediction.",
-    )
-    parser.add_argument(
-        "--neighbors",
-        type=int,
-        help="Number of neighbors for KNN.",
-        default=32,
-    )
-    parser.add_argument(
-        "--train-knn",
-        action="store_true",
-        help="Train a K Nearest Neighbor model",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Control verbosity.",
-    )
-    return parser
-'''
 
 def train_and_evaluate_model(
     train_dir: pathlib.Path,
@@ -201,7 +49,7 @@ def train_and_evaluate_model(
     train_dir
         Directory containing the training files
     save_dir
-        Path to the directory where to save metrics and images        
+        Path to the directory where to save metrics and images
     features
         List of features to use for training
     train_image_names
@@ -292,7 +140,12 @@ def train_and_evaluate_model(
                 )
                 confusion_matrix = metrics.confusion_matrix(ground_truth, pred)
                 save_path = (
-                    os.path.join(save_dir, pathlib.Path(image_name).stem + f"_{'_'.join(model_name.split(' '))}") + "_metrics"
+                    os.path.join(
+                        save_dir,
+                        pathlib.Path(image_name).stem
+                        + f"_{'_'.join(model_name.split(' '))}",
+                    )
+                    + "_metrics"
                 )
                 per_class_accuracy = confusion_matrix.diagonal() / confusion_matrix.sum(
                     axis=1
@@ -375,7 +228,6 @@ def predict(
     logger.info("Predicting on un-annotated images.")
     image_names = get_image_files(pred_dir, pred_glob)
     for image in tqdm.tqdm(image_names, total=len(image_names)):
-        print(f" DEBUG image {image}" )
         x, _, detection_df = image_to_df(
             [image],
             pred_dir,
@@ -399,171 +251,21 @@ def predict(
                 predictions = model.predict(x)
         except ValueError as e:
             print(f"ERROR: {e}")
-            raise(SystemExit(-1))
+            raise (SystemExit(-1))
         to_remove = [col for col in detection_df.columns if "Unnamed" in col]
         detection_df["RF_prediction"] = predictions
         detection_df.drop(
             columns=to_remove,
             inplace=True,
         )
-        print(f"DEBUG 1")
         if not pred_save:
             warnings.warn("--pred-save not set. Not saving CSVs")
         else:
             if not os.path.exists(pred_save):
                 os.makedirs(pred_save, exist_ok=True)
-            print(f"Saved prediction to {os.path.join(pred_save, image)} ")    
+            print(f"Saved prediction to {os.path.join(pred_save, image)} ")
             detection_df.to_csv(
                 os.path.join(pred_save, image),
                 index=False,
             )
-    print(f"predict Done ")  
-
-'''
-if __name__ == "__main__":
-    # Parse command line.
-    parser = get_parser()
-    args = parser.parse_args()
-
-    # Additional parameters.
-    logging_level = logging.INFO if args.verbose else logging.WARNING
-
-    # setup logging.
-    logging.basicConfig(
-        format="[%(levelname)s]  %(asctime)s %(name)s  %(message)s", level=logging_level
-    )
-    # Features kept for classification.
-    if args.distinguishable_second_layer:
-        classes = [
-            "Layer 1",
-            "Layer 2",
-            "Layer 3",
-            "Layer 4",
-            "Layer 5",
-            "Layer 6 a",
-            "Layer 6 b",
-        ]
-        features = [
-            "Smoothed: 50 µm: Distance to annotation with Outside Pia µm",
-            "Distance to annotation with Outside Pia µm",
-            "Smoothed: 50 µm: Min diameter µm",
-            "Centroid Y µm",
-            "Smoothed: 50 µm: Max diameter µm",
-            "Centroid X µm",
-            "Smoothed: 50 µm: Circularity",
-            "Smoothed: 50 µm: Delaunay: Max triangle area",
-            "Smoothed: 50 µm: Hematoxylin: Std.Dev.",
-            "Smoothed: 50 µm: Solidity",
-            "Smoothed: 50 µm: Delaunay: Num neighbors",
-            "Smoothed: 50 µm: Delaunay: Min distance",
-            "Length µm",
-            "Delaunay: Median distance",
-            "DAB: Std.Dev.",
-            "Max diameter µm",
-            "Area µm^2",
-            "Min diameter µm",
-            "Delaunay: Mean triangle area",
-        ]
-    else:
-        classes = [
-            "Layer 1",
-            "Layer 2/3",
-            "Layer 4",
-            "Layer 5",
-            "Layer 6 a",
-            "Layer 6 b",
-        ]
-        features = [
-            "Distance to annotation with Outside Pia µm",
-            "Smoothed: 50 µm: Distance to annotation with Outside Pia µm",
-            "Smoothed: 50 µm: Min diameter µm",
-            "Centroid Y µm",
-            "Smoothed: 50 µm: Max diameter µm",
-            "Centroid X µm",
-            "Smoothed: 50 µm: Delaunay: Max triangle area",
-            "Smoothed: 50 µm: Circularity",
-            "Smoothed: 50 µm: Solidity",
-            "Smoothed: 50 µm: Delaunay: Min distance",
-            "Smoothed: 50 µm: Nearby detection counts",
-            "Area µm^2",
-            "Smoothed: 50 µm: Hematoxylin: Min",
-            "Smoothed: 50 µm: Area µm^2",
-            "Smoothed: 50 µm: Length µm",
-            "Delaunay: Median distance",
-            "Smoothed: 50 µm: Hematoxylin: Std.Dev.",
-            "Delaunay: Mean distance",
-            "Max diameter µm",
-        ]
-
-    # Get the image names and split them in train/test.
-    filenames = get_image_files(args.train_dir, args.train_glob)
-    if not args.save_dir.exists():
-        args.save_dir.mkdir()
-    if args.model_file and not args.model_file.suffix == ".pkl":
-        raise ValueError(
-            "The model_file argument should end with a filename with the '.pkl'"
-            " extension."
-        )
-    if args.model_file and os.path.exists(args.model_file):
-        rf = pickle.load(open(args.model_file, "rb"))
-    else:
-        if args.split_ratio > 0 and args.random_split:
-            train_image_names, test_image_names = train_test_split(
-                filenames, test_size=args.split_ratio, random_state=42, shuffle=True
-            )
-        elif args.split_ratio == 0 and args.random_split:
-            train_image_names = filenames
-            test_image_names = None
-        else:
-            test_image_names = [
-                "Features_SLD_0000565.vsi-20x_01.csv",
-                "Features_SLD_0000540.vsi-20x_01.csv",
-                "Features_SLD_0000536.vsi-20x_02.csv",
-                "Features_SLD_0000560.vsi-20x_05.csv",
-                "Features_SLD_0000533.vsi-20x_03.csv",
-                "Features_SLD_0000563.vsi-20x_01.csv",
-            ]
-            train_image_names = [
-                image for image in filenames if image not in test_image_names
-            ]
-        logger.info(f"The training set contains {len(train_image_names)} images.")
-        logger.info(f"The test set contains {len(test_image_names)} images.")
-
-        # Train the model and optionally evaluate it.
-        rf = train_and_evaluate_model(
-            train_dir=args.train_dir,
-            features=features,
-            train_image_names=train_image_names,
-            save_dir=args.save_dir,
-            model_file=args.model_file,
-            gt_column=args.gt_column,
-            extension=args.extension,
-            distinguishable_second_layer=args.distinguishable_second_layer,
-            estimators=args.estimators,
-            clean_predictions=args.clean,
-            eps=args.eps,
-            min_samples=args.min_samples,
-            test_image_names=test_image_names,
-            split_ratio=args.split_ratio,
-            classes=classes,
-            show=args.show,
-            train_knn=args.train_knn,
-            neighbors=args.neighbors,
-        )
-    if args.pred_dir:
-        predict(
-            pred_dir=args.pred_dir,
-            model=rf,
-            features=features,
-            classes=classes,
-            pred_save=args.pred_save,
-            pred_glob=args.pred_glob,
-            distinguishable_second_layer=args.distinguishable_second_layer,
-            pred_extension=args.pred_extension,
-            gt_column=args.gt_column,
-            clean=args.clean,
-            eps=args.eps,
-            min_samples=args.min_samples,
-        )
-    raise SystemExit(0)
-'''
+    print(f"predict Done ")

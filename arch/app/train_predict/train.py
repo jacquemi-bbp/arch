@@ -19,8 +19,9 @@
 import pathlib
 import click
 from sklearn.model_selection import train_test_split
-from arch.ml.utils import get_image_files
+from arch.ml.utils import get_image_files, get_classes_and_features
 from arch.ml.train_and_predict import train_and_evaluate_model
+
 
 @click.command()
 @click.option(
@@ -47,7 +48,6 @@ from arch.ml.train_and_predict import train_and_evaluate_model
     default="csv",
     help="extension of the files containing the data.",
 )
-
 @click.option(
     "--gt-column",
     type=str,
@@ -76,8 +76,7 @@ from arch.ml.train_and_predict import train_and_evaluate_model
     type=float,
     default=0.1,
     help=(
-        "Fraction of the dataset sent to the test set. Only if using"
-        " --random-split."
+        "Fraction of the dataset sent to the test set. Only if using" " --random-split."
     ),
 )
 @click.option(
@@ -93,7 +92,6 @@ from arch.ml.train_and_predict import train_and_evaluate_model
     default=False,
     help="Train a K Nearest Neighbor model",
 )
-
 def cmd(
     train_dir,
     train_glob,
@@ -109,72 +107,11 @@ def cmd(
     """
     Train a model based on cells feature that predicts brain layers
     """
- # Features kept for classification.
-    if distinguishable_second_layer:
-        classes = [
-            "Layer 1",
-            "Layer 2",
-            "Layer 3",
-            "Layer 4",
-            "Layer 5",
-            "Layer 6 a",
-            "Layer 6 b",
-        ]
-        features = [
-            "Smoothed: 50 µm: Distance to annotation with Outside Pia µm",
-            "Distance to annotation with Outside Pia µm",
-            "Smoothed: 50 µm: Min diameter µm",
-            "Centroid Y µm",
-            "Smoothed: 50 µm: Max diameter µm",
-            "Centroid X µm",
-            "Smoothed: 50 µm: Circularity",
-            "Smoothed: 50 µm: Delaunay: Max triangle area",
-            "Smoothed: 50 µm: Hematoxylin: Std.Dev.",
-            "Smoothed: 50 µm: Solidity",
-            "Smoothed: 50 µm: Delaunay: Num neighbors",
-            "Smoothed: 50 µm: Delaunay: Min distance",
-            "Length µm",
-            "Delaunay: Median distance",
-            "DAB: Std.Dev.",
-            "Max diameter µm",
-            "Area µm^2",
-            "Min diameter µm",
-            "Delaunay: Mean triangle area",
-        ]
-    else:
-        classes = [
-            "Layer 1",
-            "Layer 2/3",
-            "Layer 4",
-            "Layer 5",
-            "Layer 6 a",
-            "Layer 6 b",
-        ]
-        features = [
-            "Distance to annotation with Outside Pia µm",
-            "Smoothed: 50 µm: Distance to annotation with Outside Pia µm",
-            "Smoothed: 50 µm: Min diameter µm",
-            "Centroid Y µm",
-            "Smoothed: 50 µm: Max diameter µm",
-            "Centroid X µm",
-            "Smoothed: 50 µm: Delaunay: Max triangle area",
-            "Smoothed: 50 µm: Circularity",
-            "Smoothed: 50 µm: Solidity",
-            "Smoothed: 50 µm: Delaunay: Min distance",
-            "Smoothed: 50 µm: Nearby detection counts",
-            "Area µm^2",
-            "Smoothed: 50 µm: Hematoxylin: Min",
-            "Smoothed: 50 µm: Area µm^2",
-            "Smoothed: 50 µm: Length µm",
-            "Delaunay: Median distance",
-            "Smoothed: 50 µm: Hematoxylin: Std.Dev.",
-            "Delaunay: Mean distance",
-            "Max diameter µm",
-        ]
+    # Features kept for classification.
+    classes, features = get_classes_and_features(distinguishable_second_layer)
 
     # Get the image names and split them in train/test.
     filenames = get_image_files(train_dir, train_glob)
-    print(f'DEBUG 1 filenames {filenames}')
 
     if split_ratio > 0 and random_split:
         train_image_names, test_image_names = train_test_split(
@@ -195,7 +132,9 @@ def cmd(
         train_image_names = [
             image for image in filenames if image not in test_image_names
         ]
-    print(f"The training set contains {len(train_image_names)} images. {train_image_names}")
+    print(
+        f"The training set contains {len(train_image_names)} images. {train_image_names}"
+    )
     print(f"The test set contains {len(test_image_names)} images. {test_image_names}")
 
     # Train the model and optionally evaluate it.
@@ -212,5 +151,5 @@ def cmd(
         test_image_names=test_image_names,
         split_ratio=split_ratio,
         classes=classes,
-        train_knn=train_knn
+        train_knn=train_knn,
     )
