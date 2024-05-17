@@ -193,7 +193,6 @@ ed: 50 µm: Nearby detection counts
    $ pyarch convert-qupath-project --qupath-project-path ProjectQuPath.qpproj --output-path /arch/Results
    ```
 
-
 4. Compute the  cell densities  as function of brain depth
    - modify ./Config/batch_density_depth with your configuration
      - execute the following python script
