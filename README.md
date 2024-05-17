@@ -200,27 +200,32 @@ ed: 50 µm: Nearby detection counts
    ```shell
    $  pyarch density-per-depth --config-file-path ./Config/batch_density_depth.ini
    ```
-
-5. Predict the layers:
+5. Train the ML model the layers:
    - execute the following python script
    ```shell
-   $  pyarchpredict-layer --config-file-path ./Config/batch_layers.ini
+   $  pyarch -v train-model --train-dir TRAINING_PATH --train-glob "Feat*" --extension csv  --save-dir RESULT_PATH --distinguishable-second-layer
+   ``` 
+
+6.Predict the layers:
+   - execute the following python script
+   ```shell
+   $  pyarch -v  layers-predict --model-file RESULT_PATH/trained_rf.pkl  --pred-dir $PREDICTION_PATH --pred-save  RESULT_PATH  --pred-glob "Feat*" --distinguishable-second-layer
    ```
 
-6. Compute the  cell densities  by layer (L2 and L3 merged)
+7. Compute the  cell densities  by layer (L2 and L3 merged)
    - modify ./Config/batch_density_layer_merged.ini with your configuration
    - execute the following python script
    ```shell
    $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merged.ini
    ```
-7. Compute the  cell densities  by layer (L2 and L3 distinguished)
+8. Compute the  cell densities  by layer (L2 and L3 distinguished)
    - modify ./Config/batch_density_layer_distinguish.ini with your configuration
    - execute the following python script
    ```shell
    $  pyarch density-per-layer --config-file-path ./Config/batch_density_layer_distinguish.ini
     ```
 
-8. Prepare dataset for the cell size figures
+9. Prepare dataset for the cell size figures
    - modify ./Config/batch_size with your configuration
    - execute the following python script
    ```shell
