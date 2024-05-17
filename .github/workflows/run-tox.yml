@@ -13,9 +13,7 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.11
@@ -36,7 +34,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Run tox
-        # Run tox using the version of Python in `PATH`
-      run:
+      with:
+        fail_ci_if_error: true        # Run tox using the version of Python in `PATH`
+      run: |
         pip install tox-gh-actions
         tox
