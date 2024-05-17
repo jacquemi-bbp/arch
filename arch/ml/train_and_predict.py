@@ -10,10 +10,9 @@ import warnings
 import tqdm
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
-from utils import (
+from arch.ml.utils import (
     clean_predictions,
     get_image_files,
     image_to_df,
@@ -23,7 +22,7 @@ from utils import (
 
 logger = logging.getLogger(__name__)
 
-
+'''
 def get_parser() -> argparse.ArgumentParser:
     """Get parser for command line arguments."""
     parser = argparse.ArgumentParser(
@@ -174,14 +173,13 @@ def get_parser() -> argparse.ArgumentParser:
         help="Control verbosity.",
     )
     return parser
-
+'''
 
 def train_and_evaluate_model(
     train_dir: pathlib.Path,
+    save_dir: pathlib.Path,
     features: list[str],
     train_image_names: list[str],
-    save_dir: pathlib.Path,
-    model_file: pathlib.Path | None = None,
     gt_column: str = "Expert_layer",
     extension: str = "csv",
     distinguishable_second_layer: bool = True,
@@ -202,14 +200,12 @@ def train_and_evaluate_model(
     ----------
     train_dir
         Directory containing the training files
+    save_dir
+        Path to the directory where to save metrics and images        
     features
         List of features to use for training
     train_image_names
         List of filenames used for training
-    save_dir
-        Path to the directory where to save metrics and images
-    model_file
-        Optional file of a pre-trained model to skip training
     gt_column
         Name of the column containing the ground truth in the csv
     extension
@@ -254,10 +250,8 @@ def train_and_evaluate_model(
     rf = RandomForestClassifier(n_estimators=estimators, random_state=42)
     logger.info("Training the random forest...")
     rf.fit(x_train, y_train)
-    if model_file:
-        pickle.dump(rf, open(model_file, "wb"))
-    else:
-        pickle.dump(rf, open(save_dir / "trained_rf.pkl", "wb"))
+
+    pickle.dump(rf, open(save_dir / "trained_rf.pkl", "wb"))
 
     if split_ratio > 0 and test_image_names and classes:
         models = [(rf, "Random Forest Classifier")]
@@ -381,6 +375,7 @@ def predict(
     logger.info("Predicting on un-annotated images.")
     image_names = get_image_files(pred_dir, pred_glob)
     for image in tqdm.tqdm(image_names, total=len(image_names)):
+        print(f" DEBUG image {image}" )
         x, _, detection_df = image_to_df(
             [image],
             pred_dir,
@@ -395,32 +390,36 @@ def predict(
             if clean:
                 predictions = clean_predictions(
                     detection_df.copy(),
-                    rf.predict(x),
+                    model.predict(x),
                     eps=eps,
                     min_samples=min_samples,
                     gt_column=gt_column,
                 )
             else:
                 predictions = model.predict(x)
-        except ValueError:
-            continue
+        except ValueError as e:
+            print(f"ERROR: {e}")
+            raise(SystemExit(-1))
         to_remove = [col for col in detection_df.columns if "Unnamed" in col]
         detection_df["RF_prediction"] = predictions
         detection_df.drop(
             columns=to_remove,
             inplace=True,
         )
+        print(f"DEBUG 1")
         if not pred_save:
             warnings.warn("--pred-save not set. Not saving CSVs")
         else:
             if not os.path.exists(pred_save):
                 os.makedirs(pred_save, exist_ok=True)
+            print(f"Saved prediction to {os.path.join(pred_save, image)} ")    
             detection_df.to_csv(
                 os.path.join(pred_save, image),
                 index=False,
             )
+    print(f"predict Done ")  
 
-
+'''
 if __name__ == "__main__":
     # Parse command line.
     parser = get_parser()
@@ -567,3 +566,4 @@ if __name__ == "__main__":
             min_samples=args.min_samples,
         )
     raise SystemExit(0)
+'''
