@@ -268,4 +268,5 @@ def predict(
                 os.path.join(pred_save, image),
                 index=False,
             )
+            print(f'INFO: prediction saved to {os.path.join(pred_save, image)}')
     print(f"predict Done ")
