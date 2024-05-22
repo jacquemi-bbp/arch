@@ -200,19 +200,16 @@ def clean_predictions(
 ) -> pd.Series:
     """Clean prediction based on obvious discrepencies.
 
-    Parameters
-    ----------
-    df
-        Dataframe containing the features.
-    pred
-        Numpy array containing the layer prediction for each sample.
-    eps
-        Max distance at which we considered a point as being.
-    min_samples
-        Minimum number of samples that must fall within the 'eps' radius to be concidered as a central point.
-
-    Returns
-    -------
+    Args:
+        df
+            Dataframe containing the features.
+        pred
+            Numpy array containing the layer prediction for each sample.
+        eps
+            Max distance at which we considered a point as being.
+        min_samples
+            Minimum number of samples that must fall within the 'eps' radius to be concidered as a central point.
+    Returns:
     Improved predictions.
     """
     df[gt_column] = pred
@@ -437,26 +434,25 @@ def plot_crossval_metrics(
 ) -> None:
     """Plot cross-validation metrics and confusion matrix.
 
-    Parameters
-    ----------
-    scores
-        Array of cross-validation scores.
-    per_class_accuracy
-        Array of per-class accuracies.
-    confusion_matrix
-        Confusion matrix for per-class numbers.
-    classes
-        List of class names for the Layers.
-    model_name
-        Name of the model.
-    ax_metrics
-        Ax to plot cross-validation metrics.
-    ax_confusion
-        Axe to plot confusion matrix.
-    subplot_names
-        Names for the subplots of metrics and confusion matrix.
-    fontsize
-        Font size for the plots.
+    Args:
+        scores
+            Array of cross-validation scores.
+        per_class_accuracy
+            Array of per-class accuracies.
+        confusion_matrix
+            Confusion matrix for per-class numbers.
+        classes
+            List of class names for the Layers.
+        model_name
+            Name of the model.
+        ax_metrics
+            Ax to plot cross-validation metrics.
+        ax_confusion
+            Axe to plot confusion matrix.
+        subplot_names
+            Names for the subplots of metrics and confusion matrix.
+        fontsize
+            Font size for the plots.
     """
     df = pd.DataFrame(
         np.stack([per_class_accuracy] + list(scores[:3])).T,
@@ -501,18 +497,17 @@ def plot_overall_metrics(
 ) -> None:
     """Plot overall metrics.
 
-    Parameters
-    ----------
-    metrics : np.ndarray
-        Array of metric values.
-    names : list[str]
-        List of metric names.
-    ax_overall
-        Axes to plot the overall metrics.
-    subplot_name : str
-        Name for the subplot.
-    fontsize : int, optional
-        Font size for the plots, by default 30.
+    Args
+        metrics : np.ndarray
+            Array of metric values.
+        names : list[str]
+            List of metric names.
+        ax_overall
+            Axes to plot the overall metrics.
+        subplot_name : str
+            Name for the subplot.
+        fontsize : int, optional
+            Font size for the plots, by default 30.
     """
     overall_metrics = pd.DataFrame(
         np.stack(metrics),
@@ -531,3 +526,75 @@ def plot_overall_metrics(
     )
     ax_overall.set_title(subplot_name, loc="left", x=0, fontdict={"fontsize": fontsize})
     ax_overall.set_yticklabels(ax_overall.get_yticklabels(), rotation=0)
+
+
+def get_classes_and_features(distinguishable_second_layer: bool) -> tuple:
+    """Retruen classes and features as a function of distinguishable_second_layer
+
+    Args:
+        distinguishable_second_layer : bool
+    Retunrs:
+        tuple: classes and features
+    """
+    if distinguishable_second_layer:
+        classes = [
+            "Layer 1",
+            "Layer 2",
+            "Layer 3",
+            "Layer 4",
+            "Layer 5",
+            "Layer 6 a",
+            "Layer 6 b",
+        ]
+        features = [
+            "Smoothed: 50 µm: Distance to annotation with Outside Pia µm",
+            "Distance to annotation with Outside Pia µm",
+            "Smoothed: 50 µm: Min diameter µm",
+            "Centroid Y µm",
+            "Smoothed: 50 µm: Max diameter µm",
+            "Centroid X µm",
+            "Smoothed: 50 µm: Circularity",
+            "Smoothed: 50 µm: Delaunay: Max triangle area",
+            "Smoothed: 50 µm: Hematoxylin: Std.Dev.",
+            "Smoothed: 50 µm: Solidity",
+            "Smoothed: 50 µm: Delaunay: Num neighbors",
+            "Smoothed: 50 µm: Delaunay: Min distance",
+            "Length µm",
+            "Delaunay: Median distance",
+            "DAB: Std.Dev.",
+            "Max diameter µm",
+            "Area µm^2",
+            "Min diameter µm",
+            "Delaunay: Mean triangle area",
+        ]
+    else:
+        classes = [
+            "Layer 1",
+            "Layer 2/3",
+            "Layer 4",
+            "Layer 5",
+            "Layer 6 a",
+            "Layer 6 b",
+        ]
+        features = [
+            "Distance to annotation with Outside Pia µm",
+            "Smoothed: 50 µm: Distance to annotation with Outside Pia µm",
+            "Smoothed: 50 µm: Min diameter µm",
+            "Centroid Y µm",
+            "Smoothed: 50 µm: Max diameter µm",
+            "Centroid X µm",
+            "Smoothed: 50 µm: Delaunay: Max triangle area",
+            "Smoothed: 50 µm: Circularity",
+            "Smoothed: 50 µm: Solidity",
+            "Smoothed: 50 µm: Delaunay: Min distance",
+            "Smoothed: 50 µm: Nearby detection counts",
+            "Area µm^2",
+            "Smoothed: 50 µm: Hematoxylin: Min",
+            "Smoothed: 50 µm: Area µm^2",
+            "Smoothed: 50 µm: Length µm",
+            "Delaunay: Median distance",
+            "Smoothed: 50 µm: Hematoxylin: Std.Dev.",
+            "Delaunay: Mean distance",
+            "Max diameter µm",
+        ]
+    return classes, features

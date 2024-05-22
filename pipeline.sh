@@ -1,11 +1,19 @@
 #!/bin/bash
 
+QUPATH_EXPERT_LAYERS_ANNOTATED_PROJECT_PATH="../ProjectQuPath_for_test/Ground_truth.qpproj"
 QUPATH_PROJECT_PATH="../ProjectQuPath_for_test/ProjectQuPath_for_test.qpproj"
 RESULT_PATH="/arch_results"
 FIGURE_PATH="/arch_results/Figures"
 
+FOR_PREDICTION_PATH="/arch_results/prediction"
+FOR_TRAINING_PATH="/arch_results/training"
+MODEL_PATH=/arch_results/training/model"
+
 printf "\nPIPELINE INFO: QuPath: Detect cells, export annotations and cells features\n"
 #qupath script ./qupath_scripts/full_QuPath_script.groovy -p $QUPATH_PROJECT_PATH
+
+printf "\nPIPELINE INFO: QuPath: Detect cells, export annotations and cells features for the Ground Truth images\n"
+#qupath script ./qupath_scripts/full_QuPath_script.groovy -p $QUPATH_EXPERT_LAYERS_ANNOTATED_PROJECT_PATH
 
 printf "\nPIPELINE INFO: Convert cells features and annotation to pandas dataframes\n"
 pyarch convert --config-file-path ./Config/batch_convert.ini
@@ -16,8 +24,11 @@ pyarch convert-qupath-project --qupath-project-path $QUPATH_PROJECT_PATH --outpu
 printf "\nPIPELINE INFO: Compute cell densities as function of brain depth\n"
 pyarch density-per-depth --config-file-path ./Config/batch_density_depth.ini
 
-printf "\nPIPELINE INFO: Predict images layers\n"
-pyarch predict_layer --config-file-path ./Config/batch_predict.ini
+printf "\nPIPELINE INFO: Train a Machine Learning model\n"
+pyarch -v train-model --train-dir $FOR_TRAINING_PATH --train-glob "Feat*" --extension csv  --save-dir $MODEL_PATH --distinguishable-second-layer
+
+printf "\nPIPELINE INFO: Predict the cells layer\n"
+pyarch -v  layers-predict --model-file $MODEL_PATH/trained_rf.pkl  --pred-dir $FOR_PREDICTION_PATH --pred-save  $RESULT_PATH  --pred-glob "Feat*" --distinguishable-second-layer
 
 printf "\nPIPELINE INFO: Compute cell densities per Layer with L2 and L3 merged\n"
 pyarch density-per-layer --config-file-path ./Config/batch_density_layer_merged.ini
