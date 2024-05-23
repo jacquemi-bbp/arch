@@ -20,7 +20,7 @@ Geometry module that contains geometric functions
 from math import sqrt
 
 import numpy as np
-from shapely import geometry
+from shapely import geometry, MultiPoint
 from shapely.geometry import LineString, MultiLineString, Point, Polygon
 from shapely.geometry.multipolygon import MultiPolygon
 from shapely.ops import split
@@ -278,3 +278,22 @@ def get_inside_points(polygon: Polygon, points: np.array) -> np.array:
         if polygon.contains(shapely_point):
             inside_points.append(point)
     return np.array(inside_points)
+
+
+def get_layer_thickness(cell_pos):
+        """
+    Finds the minimum rotated rectangle inside a cloud of points which constitutes
+    the layer and returns the rectangle width that represents the layer thickness
+    Args:
+        cell_pos:(np.array) of shape (N, 2). X/Y cells coordinates
+    Returns:
+        a float that correspond to the minimum_rotated_rectangle width
+    """
+        rectangle = MultiPoint(cell_pos).convex_hull.minimum_rotated_rectangle
+        rect_coord = rectangle.boundary.coords
+        linestrings = [LineString(rect_coord[k:k+2]) for k in range(len(rect_coord) - 1)]
+        min_dist = -1
+        for line in linestrings:
+            if min_dist == -1 or line.length < min_dist:
+                min_dist = line.length
+        return min_dist

@@ -477,12 +477,11 @@ def plots_cells_size_per_layers(area_dataframe, output_path=None):
     _, axes = plt.subplots(7, figsize=(5, 20), gridspec_kw={"height_ratios": ratios})
 
     layers = np.unique(area_dataframe.RF_prediction)
-
     for i, layer in enumerate(layers):
         layer_area_dataframe = area_dataframe[area_dataframe.RF_prediction == layer]
         areas = layer_area_dataframe["Area µm^2"].to_numpy()
         diameters = np.sqrt((areas / pi)) * 2
-        _ = axes[i].hist(diameters, bins=100)
+        _ = axes[i].hist(diameters, bins=100, color=layers_color[layer])
         axes[i].spines["top"].set_visible(False)
         axes[i].spines["right"].set_visible(False)
         axes[i].spines["bottom"].set_visible(False)
@@ -534,3 +533,30 @@ def plots_cells_size(
         plt.show()
     elif output_path is not None and save_plot_flag:
         plt.savefig(output_path, dpi=150)
+
+
+def plots_layer_thickness(
+    thickness_dataframe, output_path=None, visualisation_flag=False
+):
+    """
+    Make a bar that represent the layers thinkness mean and std value (um)
+    Args:
+        thikness_dataframe:(pands.Dataframe)
+        output_path:(str)
+        visualisation_flag(bool) If set display the figure otherwise save it.
+    """
+    thickness_std=thickness_dataframe.thickness_std
+    thickness=thickness_dataframe.thickness_mean
+    layers=thickness_dataframe.layers
+    # Création des barres d'erreurs
+    fig, ax = plt.subplots()
+
+    ax.barh(layers, thickness, xerr=thickness_std, capsize=5, color=layers_color.values())
+
+    ax.set_xlabel('layer thickness (µm)')
+    plt.gca().invert_yaxis()
+
+    if visualisation_flag:
+        plt.show()
+    else:
+        fig.savefig(output_path, bbox_inches='tight', pad_inches=0)
