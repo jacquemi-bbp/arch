@@ -232,6 +232,13 @@ ed: 50 µm: Nearby detection counts
    $  pyarch cell_size --config-file-path ./Config/batch_size.ini
    ```
 
+9. Prepare dataset for the layers thickness figures
+   - execute the following python script
+   ```shell
+   $  pyarch layer-thickness --feature-file-path FEATURES_PATH --output-filename OUTPUT/layer_thickness.csv
+   ```
+
+
 ## In a single pipeline command:
 - Edit the configuration file as described above.
 - Edit the pipeline.sh script to modify the following inputs:
@@ -252,6 +259,7 @@ To produce the by hemisphere figures, a csv file is required:
    ```shell
       python figures_script/cells_density.ini
       python figures_script/cells_size.py CELL_SIZE_OUTPUT_PATH/cells_area.csv output_file_path
+      python figures_script/layer_thickness.py OUTPUT/layer_thickness.csv output_file_path
    ```
 
 

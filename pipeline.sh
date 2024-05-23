@@ -39,7 +39,12 @@ pyarch density-per-layer --config-file-path ./Config/batch_density_layer_disting
 printf "\nPIPELINE INFO: Concatenate Dataframe for Cell area\n"
 pyarch cell-size --config-file-path Config/batch_size.ini
 
+printf "\nPIPELINE INFO: Generate dataframe for the layer thinkness\n"
+pyarch layer-thickness --feature-file-path /arch_results/converted/predicted/distinguish --output-filename $RESULT_PATH/layer_thickness.csv
+
+
 printf "\nPIPELINE INFO: Produces cell densities and cell sizes figures\n"
 python figures_script/cells_density.py $RESULT_PATH/output_path_batch/PerDepth $RESULT_PATH/output_path_batch/merged/ $RESULT_PATH/output_path_batch/distinguish/ $FIGURE_PATH ./data/metadata.csv
 python figures_script/cells_size.py /arch_results/output_path_batch/cell_area/cells_area.csv /tmp/cell_size.png per_layer
+python figures_script/layer_thickness.py $RESULT_PATH/layer_thickness.csv $FIGURE_PATH/layers_thickness.svg
 printf "\n----- Done ------"
