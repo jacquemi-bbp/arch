@@ -548,13 +548,16 @@ def plots_layer_thickness(
     thickness_std=thickness_dataframe.thickness_std
     thickness=thickness_dataframe.thickness_mean
     layers=thickness_dataframe.layers
+    colors = get_layer_colors(layers)
     # Création des barres d'erreurs
     fig, ax = plt.subplots()
 
-    ax.barh(layers, thickness, xerr=thickness_std, capsize=5, color=layers_color.values())
-
+    ax.barh(layers, thickness, xerr=thickness_std, color=colors)
     ax.set_xlabel('layer thickness (µm)')
     plt.gca().invert_yaxis()
+
+    #ax.bar(layers, thickness, yerr=thickness_std, color=colors)
+    #ax.set_ylabel('layer thickness (µm)')
 
     if visualisation_flag:
         plt.show()

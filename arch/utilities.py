@@ -21,6 +21,7 @@ import configparser
 import random
 
 import numpy as np
+import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 
 from arch.geometry import get_layer_thickness
@@ -149,3 +150,39 @@ def get_image_layers_thickness(feat_df, rectangle_widths):
         width = get_layer_thickness(cell_pos[mask])
         rectangle_widths[layer].append(width)
     return rectangle_widths
+
+
+def get_image_id(feature_path, cell_position_file_prefix="Features_"):
+    """
+    :param feature_path:
+    :param cell_position_file_prefix:
+    :return:
+        str: the image unique id
+    """
+    feature_str_length = len(cell_position_file_prefix)
+    prefix_pos = feature_path.rfind(cell_position_file_prefix)
+    if prefix_pos > -1:
+        feature_pos = feature_path.rfind(cell_position_file_prefix) + feature_str_length
+        image_id = (feature_path[feature_pos: feature_path.find(".csv")])
+    return image_id
+
+import re
+
+def get_animal_by_image_id(metadata_path):
+    """
+    From a metadata dataframe, returns a dictionary where the key is the image_id and the value the corresponding animal
+    :param metadata_path:
+    :return:
+        a dictionary where the key is the image_id and the value the corresponding animal
+    """
+    meta_df = pd.read_csv(metadata_path, index_col=0)
+    analyse_df = meta_df[meta_df.Analyze == True]
+    image_id_by_animal = {}
+    project_image = analyse_df[['Project_ID','Image_Name']].values.tolist()
+    for project, image in project_image:
+        underscore_pos = [m.start() for m in re.finditer('_', project)]
+        animal = project[underscore_pos[0]+1: underscore_pos[1]]
+        if animal[0] == '0':
+            animal = animal[1:]
+        image_id_by_animal[image] = animal
+    return image_id_by_animal

@@ -266,6 +266,7 @@ def plot_density_per_layer(
     _layer_df, output_path=None, title="Cell density per layer", distiguish=True
 ):
     densities = _layer_df.to_numpy()
+    print(f'DEBUG densities {densities}')
     mean = densities.mean(axis=0)
     std = densities.std(axis=0)
     columns = list(_layer_df.columns)
@@ -277,13 +278,22 @@ def plot_density_per_layer(
         distiguish=distiguish, return_type="list", return_unit="float"
     )
     plt.figure(figsize=(5, 5))
+    '''
     p1 = plt.bar(ind, mean, width, yerr=std, color=bar_colors)
-    # plt.errorbar(ind, mean, color="b")
     plt.ylabel("Cell density (cells/mm3)")
-    plt.title(title)
-    plt.xticks(ind, columns)
     current_values = plt.gca().get_yticks()
     _ = plt.gca().set_yticklabels(["{:.1e}".format(x) for x in current_values])
+    plt.xticks(ind, columns)
+    '''
+    p1 = plt.barh(ind, mean, width, xerr=std, color=bar_colors)
+    plt.xlabel("Cell density (cells/mm3)")    
+    current_values = plt.gca().get_xticks()
+    _ = plt.gca().set_xticklabels(["{:.1e}".format(x) for x in current_values])
+    plt.yticks(ind, columns)
+    plt.gca().invert_yaxis()
+    plt.title(title)
+    
+
     # plt.yticks(np.arange(0, 81, 10))
     # plt.legend((p1[0],('Men')))
     if output_path:
@@ -465,5 +475,5 @@ if __name__ == "__main__":
     plot_density_per_layer(
         d_layer_df,
         title="Cell density per layer (Distinguishable L2/L3)",
-        output_path=output_figure_path + "/per_layer_distinguish_23.svg",
+        output_path=output_figure_path + "/per_layer_distinguish_23.png",
     )

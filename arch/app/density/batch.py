@@ -16,15 +16,117 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+from collections import defaultdict
 import configparser
 import glob
 import os
 
 import click
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from pathlib import Path
+import shapely
 
 from arch.density import single_image_process_per_depth, single_image_process_per_layer
 from arch.io import write_dataframe_to_file
+from arch.utilities import get_image_id, get_animal_by_image_id, get_image_to_exlude_list
+
+@click.command()
+@click.option("--config-file-path", required=False, help="Configuration file path")
+@click.option("--visualisation-flag", is_flag=True)
+@click.option("--save-plot-flag", is_flag=True)
+
+def cmd_animal(
+    config_file_path,
+    visualisation_flag,
+    save_plot_flag,
+):
+    """
+       Compute cell densities as function of brain depth
+       """
+    config = configparser.ConfigParser()
+    config.sections()
+    config.read(config_file_path)
+
+    cell_feature_path = Path(config["BATCH"]["cell_feature_path"])
+    s1hl_path = Path(config["BATCH"]["s1hl_path"])
+    metadata_path = Path(config["BATCH"]["metadata_path"])
+    output_path = Path(config["BATCH"]["output_path"])
+    layer_thickness = float(config["BATCH"]["thickness_cut"])
+
+    try:
+        cell_position_file_prefix = config["BATCH"]["cell_position_file_prefix"]
+    except KeyError:
+        cell_position_file_prefix = "Features_"
+
+    try:
+        S1HL_file_sufix = config["BATCH"]["s1lh_file_prefix"]
+    except KeyError:
+        S1HL_file_sufix = "_S1HL_annotations"
+
+    try:
+        image_to_exlude_path = config["BATCH"]["image_to_exlude_path"]
+        df_image_to_exclude = pd.read_excel(image_to_exlude_path, index_col=0, skiprows=[0, 1, 2, 3, 4, 5, 6, 7])
+        db_image_to_exlude_list = get_image_to_exlude_list(df_image_to_exclude)
+    except KeyError:
+        db_image_to_exlude_list = []
+
+    cell_feature_list = glob.glob(str(cell_feature_path / cell_position_file_prefix) + '*.csv')
+    animal_by_image = get_animal_by_image_id(metadata_path)
+
+    densites = defaultdict(list)
+
+    index = 0
+    for feature_path in cell_feature_list:
+        image_id = get_image_id(feature_path)
+        animal = animal_by_image[image_id]
+        if image_id in db_image_to_exlude_list:
+            continue
+        cur_s1hl_path = s1hl_path / (image_id + S1HL_file_sufix + ".csv")
+
+        df_feat = pd.read_csv(feature_path)
+        nb_cells = len(df_feat[df_feat.exclude_for_density == False])
+
+        df_s1hl = pd.read_csv(cur_s1hl_path, index_col=0)
+        s1hl_points = df_s1hl[['Centroid X µm', 'Centroid Y µm']].to_numpy()
+        poly = shapely.Polygon(s1hl_points)
+        volume = poly.area * layer_thickness / 1e9
+
+        density = nb_cells / volume
+        densites[animal].append(density)
+        index+=1
+
+    densities_mean = []
+    densities_std = []
+    for animal, values in densites.items():
+        mean = np.mean(values)
+        densities_mean.append(mean)
+        std = np.std(values)
+        densities_std.append(std)
+        print(f'INFO {animal} mean cells density {mean:.0f} cells/mm3,  standard deviation {std:.2f}')
+    # Création des barres d'erreurs
+
+    if visualisation_flag or save_plot_flag:
+        fig, ax = plt.subplots(figsize=(10, 7))
+        animal = densites.keys()
+        plt.bar(animal, densities_mean, yerr=densities_std, capsize=2)
+        plt.ylabel('cell density (cell/mm3)')
+        plt.xlabel('S1HL cell density (cell/mm3)')
+        if save_plot_flag:
+            if not os.path.exists(output_path):
+                # if the directory is not present then create it.
+                os.makedirs(output_path)
+            fig.savefig(output_path / 'cell_density_by_animal.svg', bbox_inches='tight', pad_inches=0)
+        else:
+            plt.show()
+
+    print(f'INFO: Done {index} images computed')
+
+
+    print(f'INFO S1HL mean cells density {np.mean(densities_mean):.0f} cells/mm3,  standard deviation {np.std(densities_mean):.2f} ')
+
+
 
 
 @click.command()
