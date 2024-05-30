@@ -17,10 +17,13 @@ QuPath porcessing for rat somatosensory cortex Nissl data module
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from collections import defaultdict
 import alphashape
+import glob
 import numpy as np
 import pandas as pd
 from shapely.geometry.multipolygon import MultiPolygon
+import shapely
 
 from arch.geometry import (
     count_nb_cell_per_polygon,
@@ -30,7 +33,8 @@ from arch.geometry import (
     get_inside_points,
 )
 from arch.io import get_cells_coordinate
-from arch.utilities import get_image_to_exlude_list
+
+from arch.utilities import get_image_to_exlude_list, get_image_id, get_animal_by_image_id
 from arch.visualisation import (
     plot_densities,
     plot_densities_by_layer,
@@ -365,3 +369,51 @@ def compute_cell_density_per_layer(nb_cell_per_slide, split_polygons, z_length):
         densities.append(nb_cell / ((polygon.area / 1e6) * z_length))
 
     return densities
+
+
+
+def  compute_animal_densities(cell_feature_path, s1hl_path, metadata_path,
+                              layer_thickness, cell_position_file_prefix,
+                             S1HL_file_sufix, db_image_to_exlude_list):
+    """
+    Compute the SH!L density animal by animal
+    Args:
+        cell_feature_path: (pathlib.Path)
+        s1hl_path : (pathlib.Path)
+        metadata_path: (pathlib.Path)
+        layer_thickness (float)
+        cell_position_file_prefix (str)
+        S1HL_file_sufix (str)
+        db_image_to_exlude_list: (pathlib.Path)
+
+    :return:
+    A dictionary : keys animal, values cell density
+    """
+    densites = defaultdict(list)
+
+    cell_feature_list = glob.glob(str(cell_feature_path / cell_position_file_prefix) + '*.csv')
+    animal_by_image = get_animal_by_image_id(metadata_path)
+
+    index = 0
+    for feature_path in cell_feature_list:
+        image_id = get_image_id(feature_path)
+        animal = animal_by_image[image_id]
+        if image_id in db_image_to_exlude_list:
+            continue
+        cur_s1hl_path = s1hl_path / (image_id + S1HL_file_sufix + ".csv")
+
+        df_feat = pd.read_csv(feature_path)
+        nb_cells = len(df_feat[df_feat.exclude_for_density == False])
+
+        df_s1hl = pd.read_csv(cur_s1hl_path, index_col=0)
+        s1hl_points = df_s1hl[['Centroid X µm', 'Centroid Y µm']].to_numpy()
+        poly = shapely.Polygon(s1hl_points)
+        volume = poly.area * layer_thickness / 1e9
+
+        density = nb_cells / volume
+        densites[animal].append(density)
+        index+=1
+    
+    print(f'INFO: Done {index} images computed')
+
+    return densites
