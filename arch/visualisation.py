@@ -18,7 +18,7 @@ visualisation module
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from math import pi
-
+import os
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -545,21 +545,46 @@ def plots_layer_thickness(
         output_path:(str)
         visualisation_flag(bool) If set display the figure otherwise save it.
     """
-    thickness_std=thickness_dataframe.thickness_std
-    thickness=thickness_dataframe.thickness_mean
-    layers=thickness_dataframe.layers
+    thickness_std = thickness_dataframe.thickness_std
+    thickness = thickness_dataframe.thickness_mean
+    layers = thickness_dataframe.layers
     colors = get_layer_colors(layers)
     # Création des barres d'erreurs
     fig, ax = plt.subplots()
 
     ax.barh(layers, thickness, xerr=thickness_std, color=colors)
-    ax.set_xlabel('layer thickness (µm)')
+    ax.set_xlabel("layer thickness (µm)")
     plt.gca().invert_yaxis()
 
-    #ax.bar(layers, thickness, yerr=thickness_std, color=colors)
-    #ax.set_ylabel('layer thickness (µm)')
+    # ax.bar(layers, thickness, yerr=thickness_std, color=colors)
+    # ax.set_ylabel('layer thickness (µm)')
 
     if visualisation_flag:
         plt.show()
     else:
-        fig.savefig(output_path, bbox_inches='tight', pad_inches=0)
+        fig.savefig(output_path, bbox_inches="tight", pad_inches=0)
+
+
+def plot_cell_density_by_animal(
+    density_animal_dataframe, output_path, visualisation_flag=False
+):
+    """
+    Make a bars that represent the S1HL brain region cell density (cell/mm3) by animal
+    Args:
+        density_animal_dataframe:(pands.Dataframe)
+        output_path:(str)
+        visualisation_flag:(bool) If True display histogram otherwise save to output_path
+    """
+
+    print(density_animal_dataframe)
+    fig, ax = plt.subplots(figsize=(10, 7))
+    animal = density_animal_dataframe.animal.astype(str).to_list()
+    densities_mean = density_animal_dataframe.densities_mean.to_list()
+    densities_std = density_animal_dataframe.densities_std.to_list()
+    plt.bar(animal, densities_mean, yerr=densities_std, capsize=2)
+    plt.title("S1HL cell density (cell/mm3)")
+    plt.xlabel("Layers")
+    plt.ylabel("cell density (cell/mm3)")
+    if visualisation_flag:
+        plt.show()
+    fig.savefig(output_path, bbox_inches="tight", pad_inches=0)

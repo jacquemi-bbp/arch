@@ -29,9 +29,11 @@ import pandas as pd
 from pathlib import Path
 
 
-from arch.density import (single_image_process_per_depth,
-                          single_image_process_per_layer,
-                          compute_animal_densities)
+from arch.density import (
+    single_image_process_per_depth,
+    single_image_process_per_layer,
+    compute_animal_densities,
+)
 
 from arch.io import write_dataframe_to_file
 from arch.utilities import get_image_to_exlude_list
@@ -41,15 +43,14 @@ from arch.utilities import get_image_to_exlude_list
 @click.option("--config-file-path", required=False, help="Configuration file path")
 @click.option("--visualisation-flag", is_flag=True)
 @click.option("--save-plot-flag", is_flag=True)
-
 def cmd_animal(
     config_file_path,
     visualisation_flag,
     save_plot_flag,
 ):
     """
-       Compute cell densities as function of brain depth
-       """
+    Compute cell densities as function of brain depth
+    """
     config = configparser.ConfigParser()
     config.sections()
     config.read(config_file_path)
@@ -72,13 +73,22 @@ def cmd_animal(
 
     try:
         image_to_exlude_path = config["BATCH"]["image_to_exlude_path"]
-        df_image_to_exclude = pd.read_excel(image_to_exlude_path, index_col=0, skiprows=[0, 1, 2, 3, 4, 5, 6, 7])
+        df_image_to_exclude = pd.read_excel(
+            image_to_exlude_path, index_col=0, skiprows=[0, 1, 2, 3, 4, 5, 6, 7]
+        )
         db_image_to_exlude_list = get_image_to_exlude_list(df_image_to_exclude)
     except KeyError:
         db_image_to_exlude_list = []
 
-    densities = compute_animal_densities(cell_feature_path, s1hl_path, metadata_path, layer_thickness, cell_position_file_prefix,
-                             S1HL_file_sufix, db_image_to_exlude_list)
+    densities = compute_animal_densities(
+        cell_feature_path,
+        s1hl_path,
+        metadata_path,
+        layer_thickness,
+        cell_position_file_prefix,
+        S1HL_file_sufix,
+        db_image_to_exlude_list,
+    )
 
     densities_mean = []
     densities_std = []
@@ -89,37 +99,28 @@ def cmd_animal(
         densities_mean.append(mean)
         std = np.std(values)
         densities_std.append(std)
-        print(f'INFO {animal} mean cells density {mean:.0f} cells/mm3,  standard deviation {std:.2f}')
+        print(
+            f"INFO {animal} mean cells density {mean:.0f} cells/mm3,  standard deviation {std:.2f}"
+        )
 
     # dictionary of lists
-    dict = {'animal': densities.keys(), 'mean': densities_mean, 'std': densities_std}
+    dict = {
+        "animal": densities.keys(),
+        "densities_mean": densities_mean,
+        "densities_std": densities_std,
+    }
 
     if not os.path.exists(output_path):
         # if the directory is not present then create it.
         os.makedirs(output_path)
     df = pd.DataFrame.from_dict(dict)
-    df.to_csv(output_path / 'cell_density_by_animal.csv')
-    '''
-    if visualisation_flag or save_plot_flag:
-        fig, ax = plt.subplots(figsize=(10, 7))
-        animal = densites.keys()
-        plt.bar(animal, densities_mean, yerr=densities_std, capsize=2)
-        plt.ylabel('cell density (cell/mm3)')
-        plt.xlabel('S1HL cell density (cell/mm3)')
-        if save_plot_flag:
-            if not os.path.exists(output_path):
-                # if the directory is not present then create it.
-                os.makedirs(output_path)
-            fig.savefig(output_path / 'cell_density_by_animal.svg', bbox_inches='tight', pad_inches=0)
-        else:
-            plt.show()
-    '''
-    
+    output_filepath = output_path / "cell_density_by_animal.csv"
+    df.to_csv(output_filepath)
 
-
-    print(f'INFO S1HL mean cells density {np.mean(densities_mean):.0f} cells/mm3,  standard deviation {np.std(densities_mean):.2f} ')
-
-
+    print(
+        f"INFO: S1HL mean cells density {np.mean(densities_mean):.0f} cells/mm3,  standard deviation {np.std(densities_mean):.2f} "
+    )
+    print(f"INFO: Done Dataframe saved to {output_filepath}")
 
 
 @click.command()

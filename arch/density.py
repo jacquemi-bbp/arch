@@ -34,7 +34,11 @@ from arch.geometry import (
 )
 from arch.io import get_cells_coordinate
 
-from arch.utilities import get_image_to_exlude_list, get_image_id, get_animal_by_image_id
+from arch.utilities import (
+    get_image_to_exlude_list,
+    get_image_id,
+    get_animal_by_image_id,
+)
 from arch.visualisation import (
     plot_densities,
     plot_densities_by_layer,
@@ -371,10 +375,15 @@ def compute_cell_density_per_layer(nb_cell_per_slide, split_polygons, z_length):
     return densities
 
 
-
-def  compute_animal_densities(cell_feature_path, s1hl_path, metadata_path,
-                              layer_thickness, cell_position_file_prefix,
-                             S1HL_file_sufix, db_image_to_exlude_list):
+def compute_animal_densities(
+    cell_feature_path,
+    s1hl_path,
+    metadata_path,
+    layer_thickness,
+    cell_position_file_prefix,
+    S1HL_file_sufix,
+    db_image_to_exlude_list,
+):
     """
     Compute the SH!L density animal by animal
     Args:
@@ -391,7 +400,9 @@ def  compute_animal_densities(cell_feature_path, s1hl_path, metadata_path,
     """
     densites = defaultdict(list)
 
-    cell_feature_list = glob.glob(str(cell_feature_path / cell_position_file_prefix) + '*.csv')
+    cell_feature_list = glob.glob(
+        str(cell_feature_path / cell_position_file_prefix) + "*.csv"
+    )
     animal_by_image = get_animal_by_image_id(metadata_path)
 
     index = 0
@@ -406,14 +417,14 @@ def  compute_animal_densities(cell_feature_path, s1hl_path, metadata_path,
         nb_cells = len(df_feat[df_feat.exclude_for_density == False])
 
         df_s1hl = pd.read_csv(cur_s1hl_path, index_col=0)
-        s1hl_points = df_s1hl[['Centroid X µm', 'Centroid Y µm']].to_numpy()
+        s1hl_points = df_s1hl[["Centroid X µm", "Centroid Y µm"]].to_numpy()
         poly = shapely.Polygon(s1hl_points)
         volume = poly.area * layer_thickness / 1e9
 
         density = nb_cells / volume
         densites[animal].append(density)
-        index+=1
-    
-    print(f'INFO: Done {index} images computed')
+        index += 1
+
+    print(f"INFO: Done {index} images computed")
 
     return densites

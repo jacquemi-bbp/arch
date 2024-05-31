@@ -16,14 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import argparse
+from collections import defaultdict
 import glob
 import os
-import sys
-from collections import defaultdict
+import pathlib
 
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+
+from arch.visualisation import plot_cell_density_by_animal
 
 # Customize matplotlib
 matplotlib.rcParams.update(
@@ -34,10 +37,7 @@ matplotlib.rcParams.update(
     }
 )
 import pandas as pd
-import seaborn as sns
 from PIL import ImageColor
-from shapely import Polygon
-
 
 def get_color(distiguish=True, return_type="dict", return_unit="hex"):
     if distiguish:
@@ -118,7 +118,8 @@ def concate_density_dataframes(file_list, std_dev_factor=1):
             print(np.unique(df_image.image))
         else:
             frames.append(df_image)
-
+    if len(frames) == 0:
+        return None
     return pd.concat(frames, ignore_index=True)
 
 
@@ -138,11 +139,11 @@ def plot(
     plt_detail=False,
     display_legend=False,
     output_path=None,
+    visualisation_flag = False
 ):
     """
     :param densities: np.array of np.float.32 of shape (nb_images, nb_percentages, 2) 2-> depth_percentage, density
     """
-
     average = {}
     median = {}
     plt.figure(figsize=(5, 5))
@@ -194,9 +195,12 @@ def plot(
     if output_path is not None:
         plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
 
+    if visualisation_flag:
+        plt.show()
+
 
 def plot_mean_and_std_dev(
-    density_dfs, labels="", colors="blue", title=None, output_path=None
+    density_dfs, labels="", colors="blue", title=None, output_path=None, visualisation_flag = False
 ):
     """
     param: density_df' list of (or a single) pandas dataframe with columns : image 	depth_percentage densities
@@ -252,6 +256,9 @@ def plot_mean_and_std_dev(
     if output_path is not None:
         plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
 
+    if visualisation_flag:
+        plt.show()
+
 
 def dataframe_to_array(dataframe):
     # compute the average cell density
@@ -263,7 +270,7 @@ def dataframe_to_array(dataframe):
 
 
 def plot_density_per_layer(
-    _layer_df, output_path=None, title="Cell density per layer", distiguish=True
+    _layer_df, output_path=None, title="Cell density per layer", distiguish=True, visualisation_flag = False
 ):
     densities = _layer_df.to_numpy()
     print(f'DEBUG densities {densities}')
@@ -299,181 +306,248 @@ def plot_density_per_layer(
     if output_path:
         plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
 
+    if visualisation_flag:
+        plt.show()
+
+def get_parser() -> argparse.ArgumentParser:
+    """Get parser for command line arguments."""
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "--per-depth-path",
+        type=pathlib.Path,
+        help="Directory containing the per depth cell density panda Dataframes",
+    )
+    parser.add_argument(
+        "--per-layer-merged-path",
+        type=pathlib.Path,
+        help="Directory containing the per layer (l2/L3 merged) cell density panda Dataframes.",
+    )
+    parser.add_argument(
+        "--per-layer-distinguish-path",
+        type=pathlib.Path,
+        help="Directory containing the per layer (l2/L3 distinct) cell density panda Dataframes.",
+    )
+    parser.add_argument(
+        "--per-animal-path",
+        type=pathlib.Path,
+        help="file containing the per animal cell density panda Dataframes.",
+    )
+
+    parser.add_argument(
+        "--output-figure-path",
+        type=pathlib.Path,
+        help="Directory to store the generates figures.",
+        required=True
+    )
+    parser.add_argument(
+        "--metadata-file-path",
+        type=pathlib.Path,
+        help="Directory containing the metadata pandas Dataframe.",
+    )
+    parser.add_argument('--visualisation-flag',
+                        action='store_true')
+    parser.add_argument('--png',
+                        help='if set generate png files instead of svg',
+                        action='store_true')
+
+    return parser
+
 
 if __name__ == "__main__":
-    if len(sys.argv) < 5 or len(sys.argv) > 6:
-        print(
-            "usage: python cell_density.py per_depth_path per_layer_merged_path per_layer_distinguish_path\
-        output_figure_path [metadata_file_path]"
-        )
-        sys.exit()
 
-    if len(sys.argv) == 5 or len(sys.argv) == 6:
-        per_depth_path = sys.argv[1]
-        per_layer_merged_path = sys.argv[2]
-        per_layer_distinguish_path = sys.argv[3]
-        output_figure_path = sys.argv[4]
+    # Parse command line.
+    parser = get_parser()
+    args = parser.parse_args()
 
-    if len(sys.argv) == 6:
-        metadata_file_path = sys.argv[5]
+
+    if args.png:
+        args.png = "png"
     else:
-        metadata_file_path = None
+        args.png = "svg"
 
-    print(f"per_depth_path {per_depth_path}")
-    print(f"per_layer_merged_path {per_layer_merged_path}")
-    print(f"per_layer_distinguish_path {per_layer_distinguish_path}")
-    print(f"output_figure_path {output_figure_path}")
-    print(f"metadata_file_path {metadata_file_path}")
+    if args.per_depth_path:
+        file_list = glob.glob(str(args.per_depth_path) + "/*.csv")
+        density_df = concate_density_dataframes(file_list)
 
-    file_list = glob.glob(per_depth_path + "/*.csv")
-    density_df = concate_density_dataframes(file_list)
+        print(f"The dataframe contains {np.unique(density_df.image).size} images")
+        try:
+            os.makedirs(args.output_figure_path)
+        except OSError as error:
+            pass
 
-    print(f"The dataframe contains {np.unique(density_df.image).size} images")
-    try:
-        os.makedirs(output_figure_path)
-    except OSError as error:
-        pass
-
-    # Cell densities as function of brain depth
-    data = dataframe_to_array(density_df)
-    plot(
-        data,
-        "Cell density as a function of SSCX region percentage of depth.",
-        plot_median=True,
-        plt_detail=False,
-        output_path=output_figure_path + "/median_density_percentage.svg",
-    )
-
-    print(f"Plot {np.unique(density_df.image).size} images included the data")
-    plot(
-        data,
-        "Cell density as a function of SSCX region percentage of depth.",
-        plt_detail=True,
-        output_path=output_figure_path + "/full_density_percentage.svg",
-    )
-
-    print(f"Plot {np.unique(density_df.image).size} images included the data")
-    plot_mean_and_std_dev(
-        density_df,
-        title="Cell density as a function of percentage of depth of the S1HL brain region",
-        output_path=output_figure_path + "/full_std_density_percentage.svg",
-    )
-
-    if metadata_file_path is not None:
-        meta_df = pd.read_csv(metadata_file_path, index_col=0)
-
-        analyse_df = meta_df[meta_df.Analyze == True]
-        left_meta_df = analyse_df[analyse_df["hemisphere(L/R)"] == "left"]
-        right_meta_df = analyse_df[analyse_df["hemisphere(L/R)"] == "right"]
-
-        left_image_id = list(left_meta_df["Image_Name"])
-        right_image_id = list(right_meta_df["Image_Name"])
-        left_density_df = get_filtered_density_df(left_image_id, density_df)
-        right_density_df = get_filtered_density_df(right_image_id, density_df)
-
-        data = dataframe_to_array(left_density_df)
-        print(
-            f"Plot {np.unique(left_density_df.image).size} images included the left_density_df"
-        )
+        # Cell densities as function of brain depth
+        data = dataframe_to_array(density_df)
+        print(f'median_density_percentage.svg data {data}')
         plot(
             data,
-            "Left Hemisphere cell density as a function of SSCX region percentage of depth.",
-            plt_detail=True,
-            output_path=output_figure_path + "/left_density_percentage.svg",
+            "Cell density as a function of SSCX region percentage of depth.",
+            plot_median=True,
+            plt_detail=False,
+            output_path=str(args.output_figure_path / "median_density_percentage.") + args.png,
+            visualisation_flag=args.visualisation_flag
         )
 
-        data = dataframe_to_array(right_density_df)
-        print(
-            f"Plot {np.unique(right_density_df.image).size} images included the right_density_df"
-        )
+
+        print(f"Plot {np.unique(density_df.image).size} images included the data")
         plot(
             data,
-            "Right Hemisphere cell density as a function of SSCX region percentage of depth",
+            "Cell density as a function of SSCX region percentage of depth.",
             plt_detail=True,
-            output_path=output_figure_path + "/right_std_density_percentage.svg",
+            output_path=str(args.output_figure_path / "full_density_percentage." ) + args.png,
+            visualisation_flag=args.visualisation_flag
         )
 
-        print(
-            f"Plot {np.unique(left_density_df.image).size} images included the left_density_df"
-        )
-        print(
-            f"Plot {np.unique(right_density_df.image).size} images included the right_density_df"
-        )
+
+        print(f"Plot {np.unique(density_df.image).size} images included the data")
         plot_mean_and_std_dev(
-            [left_density_df, right_density_df],
-            labels=["left", "right"],
-            colors=["blue", "red"],
+            density_df,
             title="Cell density as a function of percentage of depth of the S1HL brain region",
-            output_path=output_figure_path + "/left_right_std_density_percentage.svg",
+            output_path=str(args.output_figure_path / "full_std_density_percentage." ) + args.png,
+            visualisation_flag=args.visualisation_flag
         )
 
-        project_ID_list = np.unique(analyse_df["Project_ID"])
 
-        for project_id in project_ID_list:
-            animal_meta_df = analyse_df[analyse_df["Project_ID"] == project_id]
-            animal_image_id = list(animal_meta_df["Image_Name"])
-            animal_density_df = get_filtered_density_df(animal_image_id, density_df)
-            data = dataframe_to_array(animal_density_df)
-            plot_mean_and_std_dev(
-                [animal_density_df],
-                title=f"{project_id} Cell density as a function of percentage of depth of the S1HL brain region",
+        if args.metadata_file_path is not None:
+            meta_df = pd.read_csv(args.metadata_file_path, index_col=0)
+
+            analyse_df = meta_df[meta_df.Analyze == True]
+            left_meta_df = analyse_df[analyse_df["hemisphere(L/R)"] == "left"]
+            right_meta_df = analyse_df[analyse_df["hemisphere(L/R)"] == "right"]
+
+            left_image_id = list(left_meta_df["Image_Name"])
+            right_image_id = list(right_meta_df["Image_Name"])
+            left_density_df = get_filtered_density_df(left_image_id, density_df)
+            right_density_df = get_filtered_density_df(right_image_id, density_df)
+
+            data = dataframe_to_array(left_density_df)
+            print(
+                f"Plot {np.unique(left_density_df.image).size} images included the left_density_df"
             )
             plot(
                 data,
-                f"{project_id} cell density as a function of SSCX region percentage of depth",
+                "Left Hemisphere cell density as a function of SSCX region percentage of depth.",
                 plt_detail=True,
-                output_path=f"{output_figure_path}/{project_id}_std_density_percentage.svg",
+                output_path=str(args.output_figure_path / "left_density_percentage." ) + args.png,
+                visualisation_flag=args.visualisation_flag
             )
 
-        animal_ID_list = ["ProjectQuPath"]
+            data = dataframe_to_array(right_density_df)
+            print(
+                f"Plot {np.unique(right_density_df.image).size} images included the right_density_df"
+            )
+            plot(
+                data,
+                "Right Hemisphere cell density as a function of SSCX region percentage of depth",
+                plt_detail=True,
+                output_path=str(args.output_figure_path / "right_std_density_percentage.") + args.png,
+                visualisation_flag=args.visualisation_flag
+            )
 
-        animal_df_list = []
-        for project_id in animal_ID_list:
-            animal_meta_df = analyse_df[analyse_df["Project_ID"] == project_id]
-            animal_image_id = list(animal_meta_df["Image_Name"])
-            animal_df_list.append(get_filtered_density_df(animal_image_id, density_df))
 
-        animal_df = pd.concat(animal_df_list)
+            print(
+                f"Plot {np.unique(left_density_df.image).size} images included the left_density_df"
+            )
+            print(
+                f"Plot {np.unique(right_density_df.image).size} images included the right_density_df"
+            )
+            plot_mean_and_std_dev(
+                [left_density_df, right_density_df],
+                labels=["left", "right"],
+                colors=["blue", "red"],
+                title="Cell density as a function of percentage of depth of the S1HL brain region",
+                output_path=str(args.output_figure_path / "left_right_std_density_percentage." ) + args.png,
+                visualisation_flag=args.visualisation_flag
+            )
 
-        data = dataframe_to_array(animal_df)
+
+            project_ID_list = np.unique(analyse_df["Project_ID"])
+
+            for project_id in project_ID_list:
+                animal_meta_df = analyse_df[analyse_df["Project_ID"] == project_id]
+                animal_image_id = list(animal_meta_df["Image_Name"])
+                animal_density_df = get_filtered_density_df(animal_image_id, density_df)
+                data = dataframe_to_array(animal_density_df)
+                plot_mean_and_std_dev(
+                    [animal_density_df],
+                    title=f"{project_id}_mean and std cell density",
+                    output_path=f"{args.output_figure_path}/{project_id}_std_density_percentage." + args.png,
+                    visualisation_flag=args.visualisation_flag
+                )
+
+                plot(
+                    data,
+                    f"{project_id} cell density as a function of SSCX region percentage of depth",
+                    plt_detail=True,
+                    output_path=f"{args.output_figure_path}/{project_id}_all_traces."  + args.png,
+                    visualisation_flag=args.visualisation_flag
+                )
+
+        ## Plot Both hemipheres pool
+        df_1413827 = analyse_df[analyse_df["Project_ID"].str.contains("1413827")]
+        animal_image_id = list(df_1413827["Image_Name"])
+        animal_density_df = get_filtered_density_df(animal_image_id, density_df)
+        data = dataframe_to_array(animal_density_df)
         plot_mean_and_std_dev(
-            [animal_df],
-            title=f"animal 1413828 Cell density as a function of percentage of depth of the S1HL brain region",
+            [animal_density_df],
+            title=f"animal 1413827 POOL (LH+RH) mean and std cell density",
+            output_path=f"{args.output_figure_path}/animal_1413827_std_density_percentage." + args.png,
+            visualisation_flag=args.visualisation_flag
         )
+
         plot(
             data,
-            f"animal 1413828 cell density as a function of SSCX region percentage of depth",
+            f"animal 1413827 POOL (LH+RH) All traces cell density as a function of SSCX region percentage of depth",
             plt_detail=True,
-            output_path=f"{output_figure_path}/animal_01413828_density_df_std_density_percentage.svg",
+            output_path=f"{args.output_figure_path}/animal_1413827_all_traces." + args.png,
+            visualisation_flag=args.visualisation_flag
         )
 
-    ## Cell density mean value per image cells/mm3
 
-    nb_images = len(density_df[density_df.depth_percentage == 0.00])
-    print(
-        f"mean density on {nb_images} images => {density_df.densities.mean():.2f} cells/mm3"
-    )
+        
+        ## Cell density mean value per image cells/mm3
 
+        nb_images = len(density_df[density_df.depth_percentage == 0.00])
+        print(
+            f"mean density on {nb_images} images => {density_df.densities.mean():.2f} cells/mm3"
+        )
+        
     # Cell densities per layers
+    '''
+    if args.per_layer_merged_path:
+        ## Merged Layers 2/3
+        path = args.per_layer_merged_path
+        layer_df = get_per_layer_df(path)
+        print(f"Plot {len(layer_df)} images included the layer_df")
+        plot_density_per_layer(
+            layer_df,
+            title="Cell density per layer (Merged L2/L3)",
+            output_path=str(args.output_figure_path / "per_layer_merge_23." ) + args.png,
+            distiguish=False,
+            visualisation_flag=args.visualisation_flag
+        )
 
-    ## Merged Layers 2/3
-    path = per_layer_merged_path
-    layer_df = get_per_layer_df(path)
-    print(f"Plot {len(layer_df)} images included the layer_df")
-    plot_density_per_layer(
-        layer_df,
-        title="Cell density per layer (Merged L2/L3)",
-        output_path=output_figure_path + "/per_layer_merge_23.svg",
-        distiguish=False,
-    )
+    if args.per_layer_distinguish_path:
+        ## Distinguish Layer 2 and 3
+        path_d = args.per_layer_distinguish_path
+        d_layer_df = get_per_layer_df(path_d)
 
-    ## Distinguish Layer 2 and 3
-    path_d = per_layer_distinguish_path
-    d_layer_df = get_per_layer_df(path_d)
+        print(f"Plot {len(d_layer_df)} images included the d_layer_df")
+        plot_density_per_layer(
+            d_layer_df,
+            title="Cell density per layer (Distinguishable L2/L3)",
+            output_path=args.output_figure_path / "per_layer_distinguish_23.png",
+            visualisation_flag=args.visualisation_flag
+        )
 
-    print(f"Plot {len(d_layer_df)} images included the d_layer_df")
-    plot_density_per_layer(
-        d_layer_df,
-        title="Cell density per layer (Distinguishable L2/L3)",
-        output_path=output_figure_path + "/per_layer_distinguish_23.png",
-    )
+    if args.per_animal_path:
+        density_animal_dataframe = pd.read_csv(args.per_animal_path, index_col=0)
+        if not os.path.exists(args.output_figure_path ):
+            # if the directory is not present then create it.
+            os.makedirs(args.output_figure_path )
+        output_path = str(args.output_figure_path / "per_animal." ) + args.png,
+        plot_cell_density_by_animal(density_animal_dataframe, output_path, visualisation_flag=args.visualisation_flag)
+        print(f'INFO: Done figure saved to {output_path}')
+    
+    '''
