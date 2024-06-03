@@ -189,3 +189,24 @@ def get_animal_by_image_id(metadata_path):
             animal = animal[1:]
         image_id_by_animal[image] = animal
     return image_id_by_animal
+
+
+def get_animals_id_list(meta_df):
+    """
+    From a metadata dataframe, returns a set that contains all the existing animal ids.
+    :param meta_df: Pandas Dataframe
+    :return:
+        a set that contains all the existing animal ids
+    """
+    animals=set()
+
+    analyse_df = meta_df[meta_df.Analyze == True]
+    image_id_by_animal = {}
+    project_image = analyse_df[['Project_ID','Image_Name']].values.tolist()
+    for project, image in project_image:
+        underscore_pos = [m.start() for m in re.finditer('_', project)]
+        animal = project[underscore_pos[0]+1: underscore_pos[1]]
+        if animal[0] == "0":
+            animal = animal[1:]
+        animals.add(animal)
+    return animals

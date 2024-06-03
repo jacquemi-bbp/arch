@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from arch.visualisation import plot_cell_density_by_animal
+from arch.utilities import get_animals_id_list
 
 # Customize matplotlib
 matplotlib.rcParams.update(
@@ -88,7 +89,8 @@ def get_color(distiguish=True, return_type="dict", return_unit="hex"):
 
 
 def get_per_layer_df(path):
-    file_list_layer = glob.glob(path + "*.csv")
+    #file_list_layer = glob.glob(f"{path}/*/*.csv", recursive=True)
+    file_list_layer = glob.glob(f"{path}/*.csv")
     layer_df = pd.DataFrame()
     dfs = [layer_df]
     for file in file_list_layer:
@@ -273,7 +275,6 @@ def plot_density_per_layer(
     _layer_df, output_path=None, title="Cell density per layer", distiguish=True, visualisation_flag = False
 ):
     densities = _layer_df.to_numpy()
-    print(f'DEBUG densities {densities}')
     mean = densities.mean(axis=0)
     std = densities.std(axis=0)
     columns = list(_layer_df.columns)
@@ -285,24 +286,15 @@ def plot_density_per_layer(
         distiguish=distiguish, return_type="list", return_unit="float"
     )
     plt.figure(figsize=(5, 5))
-    '''
-    p1 = plt.bar(ind, mean, width, yerr=std, color=bar_colors)
-    plt.ylabel("Cell density (cells/mm3)")
-    current_values = plt.gca().get_yticks()
-    _ = plt.gca().set_yticklabels(["{:.1e}".format(x) for x in current_values])
-    plt.xticks(ind, columns)
-    '''
-    p1 = plt.barh(ind, mean, width, xerr=std, color=bar_colors)
+    print(f'DEBUG std {std}')
+    plt.barh(ind, mean, width, xerr=std, color=bar_colors)
     plt.xlabel("Cell density (cells/mm3)")    
     current_values = plt.gca().get_xticks()
     _ = plt.gca().set_xticklabels(["{:.1e}".format(x) for x in current_values])
     plt.yticks(ind, columns)
     plt.gca().invert_yaxis()
     plt.title(title)
-    
 
-    # plt.yticks(np.arange(0, 81, 10))
-    # plt.legend((p1[0],('Men')))
     if output_path:
         plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
 
@@ -485,24 +477,26 @@ if __name__ == "__main__":
                 )
 
         ## Plot Both hemipheres pool
-        df_1413827 = analyse_df[analyse_df["Project_ID"].str.contains("1413827")]
-        animal_image_id = list(df_1413827["Image_Name"])
-        animal_density_df = get_filtered_density_df(animal_image_id, density_df)
-        data = dataframe_to_array(animal_density_df)
-        plot_mean_and_std_dev(
-            [animal_density_df],
-            title=f"animal 1413827 POOL (LH+RH) mean and std cell density",
-            output_path=f"{args.output_figure_path}/animal_1413827_std_density_percentage." + args.png,
-            visualisation_flag=args.visualisation_flag
-        )
+        animal_ids = get_animals_id_list(meta_df)
+        for animal_id in animal_ids:
+            df_animal = analyse_df[analyse_df["Project_ID"].str.contains(animal_id)]
+            animal_image_id = list(df_animal["Image_Name"])
+            animal_density_df = get_filtered_density_df(animal_image_id, density_df)
+            data = dataframe_to_array(animal_density_df)
+            plot_mean_and_std_dev(
+                [animal_density_df],
+                title=f"animal {animal_id} POOL (LH+RH) mean and std cell density",
+                output_path=f"{args.output_figure_path}/animal_{animal_id}_std_density_percentage." + args.png,
+                visualisation_flag=args.visualisation_flag
+            )
 
-        plot(
-            data,
-            f"animal 1413827 POOL (LH+RH) All traces cell density as a function of SSCX region percentage of depth",
-            plt_detail=True,
-            output_path=f"{args.output_figure_path}/animal_1413827_all_traces." + args.png,
-            visualisation_flag=args.visualisation_flag
-        )
+            plot(
+                data,
+                f"animal {animal_id} POOL (LH+RH) All traces cell density as a function of SSCX region percentage of depth",
+                plt_detail=True,
+                output_path=f"{args.output_figure_path}/animal_{animal_id}_all_traces." + args.png,
+                visualisation_flag=args.visualisation_flag
+            )
 
 
         
@@ -514,11 +508,10 @@ if __name__ == "__main__":
         )
         
     # Cell densities per layers
-    '''
+
     if args.per_layer_merged_path:
         ## Merged Layers 2/3
-        path = args.per_layer_merged_path
-        layer_df = get_per_layer_df(path)
+        layer_df = get_per_layer_df(args.per_layer_merged_path)
         print(f"Plot {len(layer_df)} images included the layer_df")
         plot_density_per_layer(
             layer_df,
@@ -550,4 +543,3 @@ if __name__ == "__main__":
         plot_cell_density_by_animal(density_animal_dataframe, output_path, visualisation_flag=args.visualisation_flag)
         print(f'INFO: Done figure saved to {output_path}')
     
-    '''

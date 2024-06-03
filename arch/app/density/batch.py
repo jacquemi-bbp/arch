@@ -93,7 +93,6 @@ def cmd_animal(
     densities_mean = []
     densities_std = []
 
-    results = {}
     for animal, values in densities.items():
         mean = np.mean(values)
         densities_mean.append(mean)
