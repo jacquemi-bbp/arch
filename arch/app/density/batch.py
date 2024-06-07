@@ -333,7 +333,7 @@ def multiple_image_process_per_layer(
             save_plot_flag=save_plot_flag,
             alpha=alpha,
         )
-    
+
         animal_frames.append(per_layer_dataframe)
 
         if per_layer_dataframe is None:

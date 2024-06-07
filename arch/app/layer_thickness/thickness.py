@@ -50,8 +50,6 @@ from arch.geometry import get_layers_thickness
     required=True,
     help="Path to the directory that contains thepoints annotations",
 )
-
-
 @click.option(
     "--metadata-path",
     type=pathlib.Path,
@@ -70,8 +68,13 @@ from arch.geometry import get_layers_thickness
     required=False,
     help="If provided, exclude the image listed in this file",
 )
-def cmd(feature_file_path, points_annotations_path,
-        metadata_path, output_filename, image_to_exclude_path):
+def cmd(
+    feature_file_path,
+    points_annotations_path,
+    metadata_path,
+    output_filename,
+    image_to_exclude_path,
+):
     """
     Compute layers thickness and saved result to a dataframe2
     """
@@ -90,7 +93,7 @@ def cmd(feature_file_path, points_annotations_path,
 
     animal_by_image = get_animal_by_image_id(metadata_path)
 
-    '''
+    """
     rectangle_widths_by_animal = defaultdict(lambda: defaultdict(list))
     for features_path in features_filelist:
         image_id = get_image_id(features_path)
@@ -107,7 +110,7 @@ def cmd(feature_file_path, points_annotations_path,
         index += 1
         if index >= 20:
             break
-    '''
+    """
     animals_layers_thickness = defaultdict(lambda: defaultdict(list))
 
     for features_path in features_filelist:
@@ -119,17 +122,22 @@ def cmd(feature_file_path, points_annotations_path,
             continue
         df_feat = pd.read_csv(features_path, index_col=0)
 
-        points_annotation_path = str(points_annotations_path) + "/" + image_id + '_points_annotations.csv'
+        points_annotation_path = (
+            str(points_annotations_path) + "/" + image_id + "_points_annotations.csv"
+        )
         points_annotation_df = pd.read_csv(points_annotation_path, index_col=0)
-        top_left, top_right, bottom_right, bottom_left = get_s1hl_corners(points_annotation_df)
+        top_left, top_right, bottom_right, bottom_left = get_s1hl_corners(
+            points_annotation_df
+        )
 
-        animals_layers_thickness[animal] = get_layers_thickness(df_feat, top_left, top_right, bottom_left, bottom_right)
+        animals_layers_thickness[animal] = get_layers_thickness(
+            df_feat, top_left, top_right, bottom_left, bottom_right
+        )
         print(f"INFO Done {index}/{total}\r", end="")
         index += 1
-    print(f'DEBUG animals_layers_thickness {animals_layers_thickness}')
+    print(f"DEBUG animals_layers_thickness {animals_layers_thickness}")
 
     thickness_mean_by_animal = defaultdict(list)
-
 
     for animal, layers_thickness in animals_layers_thickness.items():
         for layer, thickness in layers_thickness.items():
@@ -141,14 +149,13 @@ def cmd(feature_file_path, points_annotations_path,
         thickness_mean_animal.append(values)
         thickness_layer_animal.append(layer)
 
-    print(f'thickness_mean_animal {thickness_mean_animal}')
-    print(f'thickness_layer_animal {thickness_layer_animal}')
+    print(f"thickness_mean_animal {thickness_mean_animal}")
+    print(f"thickness_layer_animal {thickness_layer_animal}")
 
     d = {
         "layers": thickness_layer_animal,
         "thickness_mean": thickness_mean_animal,
     }
-
 
     df = pd.DataFrame(data=d)
     df.to_csv(output_filename)

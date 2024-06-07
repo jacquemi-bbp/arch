@@ -28,7 +28,6 @@ from shapely.geometry.multipolygon import MultiPolygon
 from shapely.ops import split
 
 
-
 def distance(pt1, pt2):
     """
     Return the euclidian distance from two 2D points
@@ -297,7 +296,7 @@ def get_layers_thickness(df_feat, top_left, top_right, bottom_left, bottom_right
     layers.sort()
 
     prev = None
-    cell_pos = df_feat[['Centroid X µm', 'Centroid Y µm']].to_numpy()
+    cell_pos = df_feat[["Centroid X µm", "Centroid Y µm"]].to_numpy()
     for layer in layers:
         mask = (df_feat.RF_prediction == layer).to_numpy()
         layer_pos = cell_pos[mask]

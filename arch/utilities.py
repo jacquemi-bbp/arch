@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 
-#from arch.geometry import get_layer_thickness
+# from arch.geometry import get_layer_thickness
 
 
 def get_config(config_file_path: str):
@@ -167,7 +167,6 @@ def get_image_id(feature_path, cell_position_file_prefix="Features_"):
         feature_pos = feature_path.rfind(cell_position_file_prefix) + feature_str_length
         image_id = feature_path[feature_pos : feature_path.find(".csv")]
     return image_id
-    
 
 
 import re
@@ -200,14 +199,14 @@ def get_animals_id_list(meta_df):
     :return:
         a set that contains all the existing animal ids
     """
-    animals=set()
+    animals = set()
 
     analyse_df = meta_df[meta_df.Analyze == True]
     image_id_by_animal = {}
-    project_image = analyse_df[['Project_ID','Image_Name']].values.tolist()
+    project_image = analyse_df[["Project_ID", "Image_Name"]].values.tolist()
     for project, image in project_image:
-        underscore_pos = [m.start() for m in re.finditer('_', project)]
-        animal = project[underscore_pos[0]+1: underscore_pos[1]]
+        underscore_pos = [m.start() for m in re.finditer("_", project)]
+        animal = project[underscore_pos[0] + 1 : underscore_pos[1]]
         if animal[0] == "0":
             animal = animal[1:]
         animals.add(animal)
@@ -215,8 +214,8 @@ def get_animals_id_list(meta_df):
 
 
 def get_s1hl_corners(df_points):
-    top_left = df_points[df_points.index == 'top_left'].to_numpy()[0]
-    top_right = df_points[df_points.index == 'top_right'].to_numpy()[0]
-    bottom_right = df_points[df_points.index == 'bottom_right'].to_numpy()[0]
-    bottom_left = df_points[df_points.index == 'bottom_left'].to_numpy()[0]
+    top_left = df_points[df_points.index == "top_left"].to_numpy()[0]
+    top_right = df_points[df_points.index == "top_right"].to_numpy()[0]
+    bottom_right = df_points[df_points.index == "bottom_right"].to_numpy()[0]
+    bottom_left = df_points[df_points.index == "bottom_left"].to_numpy()[0]
     return top_left, top_right, bottom_right, bottom_left
