@@ -17,13 +17,16 @@ Geometry module that contains geometric functions
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from collections import defaultdict
 from math import sqrt
 
+import alphashape
 import numpy as np
-from shapely import geometry, MultiPoint
+from shapely import geometry, MultiPoint, intersection
 from shapely.geometry import LineString, MultiLineString, Point, Polygon
 from shapely.geometry.multipolygon import MultiPolygon
 from shapely.ops import split
+
 
 
 def distance(pt1, pt2):
@@ -280,7 +283,58 @@ def get_inside_points(polygon: Polygon, points: np.array) -> np.array:
     return np.array(inside_points)
 
 
-def get_layer_thickness(cell_pos):
+def get_layers_thickness(df_feat, top_left, top_right, bottom_left, bottom_right):
+    """
+    Compute layer thinkness from interception line of alphashape that represent the layers
+    :return:
+    """
+    layers_thickness = defaultdict(list)
+    computed_points = []
+    top_mean = (top_left + top_right) / 2
+    computed_points.append(top_mean)
+    bottom_mean = (bottom_left + bottom_right) / 2
+    layers = np.unique(df_feat.RF_prediction)
+    layers.sort()
+
+    prev = None
+    cell_pos = df_feat[['Centroid X µm', 'Centroid Y µm']].to_numpy()
+    for layer in layers:
+        mask = (df_feat.RF_prediction == layer).to_numpy()
+        layer_pos = cell_pos[mask]
+        shape = alphashape.alphashape(layer_pos, alpha=0.001)
+
+        inter_points = []
+        if prev is None:
+            prev = shape
+
+        else:
+            inter = intersection(prev, shape)
+            if isinstance(inter, MultiPolygon):
+                for poly in inter.geoms:
+                    # plt.plot(*poly.exterior.xy, color='black')
+                    inter_points.append(np.transpose(poly.exterior.xy))
+            else:
+                # plt.plot(*inter.exterior.xy, color='black')
+                inter_points.append(np.transpose(inter.exterior.xy))
+            prev = shape
+            mean_interpoint = np.mean(np.concatenate(inter_points), axis=0)
+
+            x_min = np.min(shape.exterior.xy[0])
+            x_max = np.max(shape.exterior.xy[0])
+            x_mean = (x_min + x_max) / 2
+            # plt.scatter(x_mean, mean_interpoint[1], s=500, color=colors[layer] )
+            computed_points.append([x_mean, mean_interpoint[1]])
+
+    computed_points.append(bottom_mean)
+    for l_index, layer in enumerate(layers):
+        a = np.array(computed_points[l_index + 1])
+        b = np.array(computed_points[l_index])
+        layers_thickness[layer].append(np.linalg.norm(a - b))
+
+    return layers_thickness
+
+
+def get_layer_thickness_old(cell_pos):
     """
     Finds the minimum rotated rectangle inside a cloud of points which constitutes
     the layer and returns the rectangle width that represents the layer thickness

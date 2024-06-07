@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 
-from arch.geometry import get_layer_thickness
+#from arch.geometry import get_layer_thickness
 
 
 def get_config(config_file_path: str):
@@ -130,7 +130,7 @@ def get_image_to_exlude_list(df_image_to_exclude):
     return list(df_image_to_exclude["Image ID to exclude"])
 
 
-def get_image_layers_thickness(feat_df, rectangle_widths):
+def get_image_layers_thickness_old(feat_df, rectangle_widths):
     """
     Compute layers thickness
     Args:
@@ -162,10 +162,12 @@ def get_image_id(feature_path, cell_position_file_prefix="Features_"):
     """
     feature_str_length = len(cell_position_file_prefix)
     prefix_pos = feature_path.rfind(cell_position_file_prefix)
+    image_id = None
     if prefix_pos > -1:
         feature_pos = feature_path.rfind(cell_position_file_prefix) + feature_str_length
         image_id = feature_path[feature_pos : feature_path.find(".csv")]
     return image_id
+    
 
 
 import re
@@ -210,3 +212,11 @@ def get_animals_id_list(meta_df):
             animal = animal[1:]
         animals.add(animal)
     return animals
+
+
+def get_s1hl_corners(df_points):
+    top_left = df_points[df_points.index == 'top_left'].to_numpy()[0]
+    top_right = df_points[df_points.index == 'top_right'].to_numpy()[0]
+    bottom_right = df_points[df_points.index == 'bottom_right'].to_numpy()[0]
+    bottom_left = df_points[df_points.index == 'bottom_left'].to_numpy()[0]
+    return top_left, top_right, bottom_right, bottom_left

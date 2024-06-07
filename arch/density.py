@@ -194,7 +194,7 @@ def single_image_process_per_layer(
         search_name = image_name.replace("Features_", "")
         if search_name.replace(" ", "") in images_to_exlude:
             print(f"ERROR {search_name} is present in the df_image_to_exclude dataset")
-            return None, None
+            return None
 
     cells_features_df = pd.read_csv(cell_position_file_path, index_col=0)
     assert "exclude_for_density" in cells_features_df.columns
@@ -205,6 +205,7 @@ def single_image_process_per_layer(
         layers_densities, cells_pos_list, polygons = densities_from_layers(
             cells_features_df, layers, thickness_cut, alpha=alpha
         )
+
         if visualisation_flag or save_plot_flag:
             plot_layers(
                 cells_pos_list,
@@ -217,6 +218,8 @@ def single_image_process_per_layer(
             plot_densities_by_layer(
                 layers, layers_densities, image_name, output_path, visualisation_flag
             )
+        layers_densities.insert(0, image_name)
+        layers = np.insert(layers, 0, "Image")
         per_layer_dataframe = pd.DataFrame([layers_densities], columns=layers)
 
     return per_layer_dataframe
