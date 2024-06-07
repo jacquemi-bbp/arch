@@ -545,20 +545,38 @@ def plots_layer_thickness(
         output_path:(str)
         visualisation_flag(bool) If set display the figure otherwise save it.
     """
-    thickness_std = thickness_dataframe.thickness_std
-    thickness = thickness_dataframe.thickness_mean
-    layers = thickness_dataframe.layers
-    colors = get_layer_colors(layers)
+
+    thickness_mean = thickness_dataframe.thickness_mean.to_list()
+
+    all_animal_thickness_mean = []
+    all_animal_thickness_std = []
+    for values in thickness_mean:
+        all_animal_thickness_mean.append(np.mean(values))
+        all_animal_thickness_std.append(np.std(values))
+
+    layers_label = ["Layer 1", "Layer 2", "Layer 3", "Layer 4", "Layer 5",
+                    "Layer 6 a", "Layer 6 b"]
+    color_bar = get_layer_colors(layers_label)
+
     # Création des barres d'erreurs
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 7))
 
-    ax.barh(layers, thickness, xerr=thickness_std, color=colors)
-    ax.set_xlabel("layer thickness (µm)")
+    plt.barh(layers_label, all_animal_thickness_mean, xerr=all_animal_thickness_std, capsize=2, color=color_bar)
+
+    plt.ylabel('layer thickness (µm)')
+
+    index = 0
+    label = "animal mean"
+    for values in thickness_mean:
+        for thickness in values:
+            if label is not None:
+                plt.scatter(thickness, index + (np.random.rand() / 2) - .25, s=5, c='orange', label=label)
+                label = None
+            else:
+                plt.scatter(thickness, index + (np.random.rand() / 2) - .25, s=5, c='orange')
+        index += 1
+
     plt.gca().invert_yaxis()
-
-    # ax.bar(layers, thickness, yerr=thickness_std, color=colors)
-    # ax.set_ylabel('layer thickness (µm)')
-
     if visualisation_flag:
         plt.show()
     else:

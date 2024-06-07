@@ -23,7 +23,7 @@ import pandas as pd
 from arch.visualisation import plots_layer_thickness
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3 :
+    if len(sys.argv) != 3:
         print(
             "usage: python layer_thickness.py layer_thickness_dataframe_path output_directory_path"
         )
@@ -32,5 +32,10 @@ if __name__ == "__main__":
     layer_thickness_dataframe_path = sys.argv[1]
     output_directory_path = sys.argv[2]
 
-    layer_thickness_dataframe_path = pd.read_csv(layer_thickness_dataframe_path)
-    plots_layer_thickness(layer_thickness_dataframe_path, output_path=output_directory_path)
+    layer_thickness_dataframe_path = pd.read_csv(
+        layer_thickness_dataframe_path, converters={"thickness_mean": pd.eval}
+    )
+
+    plots_layer_thickness(
+        layer_thickness_dataframe_path, output_path=output_directory_path
+    )

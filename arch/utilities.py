@@ -130,29 +130,6 @@ def get_image_to_exlude_list(df_image_to_exclude):
     return list(df_image_to_exclude["Image ID to exclude"])
 
 
-def get_image_layers_thickness_old(feat_df, rectangle_widths):
-    """
-    Compute layers thickness
-    Args:
-    - feat_df (pandas.Dataframe) contains the cells features including RF_prediction
-    - rectangle_widths (dictionary) contains the layer thickness values by layer.
-     Caution, this dictionary will be update by the function
-
-    Returns:
-        The inpute dictionary updated with some new values
-    """
-
-    layers = np.unique(feat_df.RF_prediction)
-    layers.sort()
-
-    cell_pos = feat_df[["Centroid X µm", "Centroid Y µm"]].to_numpy()
-    for layer in layers:
-        mask = (feat_df.RF_prediction == layer).to_numpy()
-        width = get_layer_thickness(cell_pos[mask])
-        rectangle_widths[layer].append(width)
-    return rectangle_widths
-
-
 def get_image_id(feature_path, cell_position_file_prefix="Features_"):
     """
     :param feature_path:

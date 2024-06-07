@@ -331,24 +331,3 @@ def get_layers_thickness(df_feat, top_left, top_right, bottom_left, bottom_right
         layers_thickness[layer].append(np.linalg.norm(a - b))
 
     return layers_thickness
-
-
-def get_layer_thickness_old(cell_pos):
-    """
-    Finds the minimum rotated rectangle inside a cloud of points which constitutes
-    the layer and returns the rectangle width that represents the layer thickness
-    Args:
-        cell_pos:(np.array) of shape (N, 2). X/Y cells coordinates
-    Returns:
-        a float that correspond to the minimum_rotated_rectangle width
-    """
-    rectangle = MultiPoint(cell_pos).convex_hull.minimum_rotated_rectangle
-    rect_coord = rectangle.boundary.coords
-    linestrings = [
-        LineString(rect_coord[k : k + 2]) for k in range(len(rect_coord) - 1)
-    ]
-    min_dist = -1
-    for line in linestrings:
-        if min_dist == -1 or line.length < min_dist:
-            min_dist = line.length
-    return min_dist
