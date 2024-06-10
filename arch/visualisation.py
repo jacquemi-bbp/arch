@@ -17,6 +17,7 @@ visualisation module
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from collections import defaultdict
 from math import pi
 import os
 import matplotlib
@@ -56,6 +57,57 @@ def get_layer_colors(values):
         return np.take(colors, [0, 1, 2, 4, 5, 6, 7])
 
     return None
+
+
+from PIL import ImageColor
+
+
+def get_color(distiguish=True, return_type="dict", return_unit="hex"):
+    if distiguish:
+        layers_color = {
+            "Layer 1": "#ff0000",
+            "Layer 2": "#ff0099",
+            "Layer 3": "#cc00ff",
+            "Layer 4": "#3300ff",
+            "Layer 5": "#0066FF",
+            "Layer 6 a": "#00ffff",
+            "Layer 6 b": "#00ff66",
+        }
+    else:
+        layers_color = {
+            "Layer 1": "#ff0000",
+            "Layer 2/3": "#751402",
+            "Layer 4": "#3300ff",
+            "Layer 5": "#0066FF",
+            "Layer 6 a": "#00ffff",
+            "Layer 6 b": "#00ff66",
+        }
+    layers_color_int = {}
+    layers_color_float = {}
+
+    for key, value in layers_color.items():
+        layers_color_int[key] = list(np.array(ImageColor.getcolor(value, "RGB")))
+        layers_color_float[key] = list(
+            np.array(ImageColor.getcolor(value, "RGB")) / 255
+        )
+
+    if return_type == "dict":
+        if return_unit == "hex":
+            return layers_color
+        elif return_unit == "float":
+            return layers_color_float
+        elif return_unit == "int":
+            return layers_color_int
+
+    if return_type == "list":
+        if return_unit == "hex":
+            return list(layers_color.values())
+        elif return_unit == "float":
+            return list(layers_color_float.values())
+        elif return_unit == "int":
+            return list(layers_color_int.values())
+
+    raise (ValueError("return_type or return_unit not valid"))
 
 
 def plot_segment(line, color="black"):
@@ -554,26 +606,47 @@ def plots_layer_thickness(
         all_animal_thickness_mean.append(np.mean(values))
         all_animal_thickness_std.append(np.std(values))
 
-    layers_label = ["Layer 1", "Layer 2", "Layer 3", "Layer 4", "Layer 5",
-                    "Layer 6 a", "Layer 6 b"]
+    layers_label = [
+        "Layer 1",
+        "Layer 2",
+        "Layer 3",
+        "Layer 4",
+        "Layer 5",
+        "Layer 6 a",
+        "Layer 6 b",
+    ]
     color_bar = get_layer_colors(layers_label)
 
     # Création des barres d'erreurs
     fig, ax = plt.subplots(figsize=(10, 7))
 
-    plt.barh(layers_label, all_animal_thickness_mean, xerr=all_animal_thickness_std, capsize=2, color=color_bar)
+    plt.barh(
+        layers_label,
+        all_animal_thickness_mean,
+        xerr=all_animal_thickness_std,
+        capsize=2,
+        color=color_bar,
+    )
 
-    plt.ylabel('layer thickness (µm)')
+    plt.ylabel("layer thickness (µm)")
 
     index = 0
     label = "animal mean"
     for values in thickness_mean:
         for thickness in values:
             if label is not None:
-                plt.scatter(thickness, index + (np.random.rand() / 2) - .25, s=5, c='orange', label=label)
+                plt.scatter(
+                    thickness,
+                    index + (np.random.rand() / 2) - 0.25,
+                    s=5,
+                    c="orange",
+                    label=label,
+                )
                 label = None
             else:
-                plt.scatter(thickness, index + (np.random.rand() / 2) - .25, s=5, c='orange')
+                plt.scatter(
+                    thickness, index + (np.random.rand() / 2) - 0.25, s=5, c="orange"
+                )
         index += 1
 
     plt.gca().invert_yaxis()
@@ -584,16 +657,69 @@ def plots_layer_thickness(
 
 
 def plot_cell_density_by_animal(
-    density_animal_dataframe, output_path, visualisation_flag=False
+    densites, layers, output_path, visualisation_flag=False
 ):
     """
     Make a bars that represent the S1HL brain region cell density (cell/mm3) by animal
     Args:
-        density_animal_dataframe:(pands.Dataframe)
+        densites:(dictionary)
+        layers:(list)
         output_path:(str)
         visualisation_flag:(bool) If True display histogram otherwise save to output_path
     """
+    densities_dict_mean = defaultdict(list)
+    densities_dict_std = defaultdict(list)
+    # fig, ax = plt.subplots(figsize =(10, 7))
 
+    for animal, layers_densities in densites.items():
+        for layer_name, layer_densities in layers_densities.items():
+            densities_dict_mean[layer_name].append(np.mean(layer_densities))
+            densities_dict_std[layer_name].append(np.std(layer_densities))
+    densities_mean = list()
+    densities_std = list()
+
+    for mean_values, std_valeus in zip(
+        densities_dict_mean.values(), densities_dict_std.values()
+    ):
+        densities_mean.append(np.mean(mean_values))
+        densities_std.append(np.std(std_valeus))
+    bar_colors = get_color(distiguish=True, return_type="list", return_unit="float")
+    fig = plt.figure(figsize=(10, 10))
+
+    plt.barh(layers, densities_mean, xerr=densities_std, capsize=2, color=bar_colors)
+    plt.ylabel("cell density (cell/mm3)")
+    plt.xlabel("Layers cell density (cell/mm3)")
+
+    current_values = plt.gca().get_xticks()
+    _ = plt.gca().set_xticklabels(["{:.1e}".format(x) for x in current_values])
+
+    index = 0
+    label = "animal mean"
+    for values in densities_dict_mean.values():
+        for density in values:
+            if label is not None:
+                plt.scatter(
+                    density,
+                    index + (np.random.rand() / 2) - 0.25,
+                    s=5,
+                    c="orange",
+                    label=label,
+                )
+                label = None
+            else:
+                plt.scatter(
+                    density, index + (np.random.rand() / 2) - 0.25, s=5, c="orange"
+                )
+        index += 1
+
+    plt.gca().invert_yaxis()
+    plt.legend()
+
+    fig.savefig(output_path, bbox_inches="tight", pad_inches=0)
+    if visualisation_flag:
+        plt.show()
+
+    """
     print(density_animal_dataframe)
     fig, ax = plt.subplots(figsize=(10, 7))
     animal = density_animal_dataframe.animal.astype(str).to_list()
@@ -606,3 +732,4 @@ def plot_cell_density_by_animal(
     if visualisation_flag:
         plt.show()
     fig.savefig(output_path, bbox_inches="tight", pad_inches=0)
+    """
