@@ -29,14 +29,14 @@ import pandas as pd
 from pathlib import Path
 
 
-from arch.density import (
+from layer_recognition.density import (
     single_image_process_per_depth,
     single_image_process_per_layer,
     compute_animal_densities,
 )
 
-from arch.io import write_dataframe_to_file
-from arch.utilities import get_image_to_exlude_list
+from layer_recognition.io import write_dataframe_to_file
+from layer_recognition.utilities import get_image_to_exlude_list
 
 
 @click.command()

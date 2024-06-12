@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
 
-from arch.geometry import compute_cells_polygon_level
+from layer_recognition.geometry import compute_cells_polygon_level
 
 # plt.rcParams["font.family"] = "Arial"
 layers_color = {

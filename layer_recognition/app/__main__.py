@@ -23,20 +23,20 @@ import logging
 
 import click
 
-from arch.app.cell_size.batch import cmd as batch_cell_size
-from arch.app.convert.batch import cmd as batch_convert
-from arch.app.convert.project import cmd as project_convert
-from arch.app.density.batch import cmd_depth as batch_density_depth
-from arch.app.density.batch import cmd_layer as batch_density_layer
-from arch.app.density.batch import cmd_animal as batch_density_animal
-from arch.app.train_predict.predict import cmd as predict
-from arch.app.train_predict.train import cmd as train
-from arch.app.layer_thickness.thickness import cmd as layer_thickness
-from arch.app.logger import setup_logging
-from arch.version import VERSION
+from layer_recognition.app.cell_size.batch import cmd as batch_cell_size
+from layer_recognition.app.convert.batch import cmd as batch_convert
+from layer_recognition.app.convert.project import cmd as project_convert
+from layer_recognition.app.density.batch import cmd_depth as batch_density_depth
+from layer_recognition.app.density.batch import cmd_layer as batch_density_layer
+from layer_recognition.app.density.batch import cmd_animal as batch_density_animal
+from layer_recognition.app.train_predict.predict import cmd as predict
+from layer_recognition.app.train_predict.train import cmd as train
+from layer_recognition.app.layer_thickness.thickness import cmd as layer_thickness
+from layer_recognition.app.logger import setup_logging
+from layer_recognition.version import VERSION
 
 
-@click.group("pyarch", help=__doc__.format(esc="\b"))
+@click.group("pylayer_recognition", help=__doc__.format(esc="\b"))
 @click.option("-v", "--verbose", count=True, help="-v for INFO, -vv for DEBUG")
 @click.version_option(VERSION)
 def app(verbose=0):

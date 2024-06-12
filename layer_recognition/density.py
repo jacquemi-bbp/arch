@@ -25,21 +25,21 @@ import pandas as pd
 from shapely.geometry.multipolygon import MultiPolygon
 import shapely
 
-from arch.geometry import (
+from layer_recognition.geometry import (
     count_nb_cell_per_polygon,
     create_depth_polygons,
     create_grid,
     get_bigger_polygon,
     get_inside_points,
 )
-from arch.io import get_cells_coordinate
+from layer_recognition.io import get_cells_coordinate
 
-from arch.utilities import (
+from layer_recognition.utilities import (
     get_image_to_exlude_list,
     get_image_id,
     get_animal_by_image_id,
 )
-from arch.visualisation import (
+from layer_recognition.visualisation import (
     plot_densities,
     plot_densities_by_layer,
     plot_layers,

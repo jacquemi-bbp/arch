@@ -20,7 +20,7 @@ import sys
 
 import pandas as pd
 
-from arch.visualisation import plots_layer_thickness
+from layer_recognition.visualisation import plots_layer_thickness
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

@@ -22,8 +22,8 @@ import os
 import pandas as pd
 from numpy import random
 
-from arch.io import read_qupath_annotations
-from arch.utilities import stereology_exclusion
+from layer_recognition.io import read_qupath_annotations
+from layer_recognition.utilities import stereology_exclusion
 
 
 def single_image_conversion(

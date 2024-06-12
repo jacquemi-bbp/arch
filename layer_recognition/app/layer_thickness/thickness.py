@@ -26,15 +26,15 @@ import click
 import numpy as np
 import pandas as pd
 
-from arch.utilities import get_s1hl_corners
+from layer_recognition.utilities import get_s1hl_corners
 
-from arch.utilities import (
+from layer_recognition.utilities import (
     get_animal_by_image_id,
     get_image_to_exlude_list,
     get_image_id,
 )
 
-from arch.geometry import get_layers_thickness
+from layer_recognition.geometry import get_layers_thickness
 
 
 @click.command()

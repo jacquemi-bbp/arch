@@ -1,7 +1,7 @@
 """ test the configuration parser"""
 
 from pathlib import Path
-import arch.utilities as tested
+import layer_recognition.utilities as tested
 
 CONFIG_DIR = Path(__file__).resolve().parent.parent / "Config"
 

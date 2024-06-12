@@ -12,7 +12,7 @@ from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
-from arch.ml.utils import (
+from layer_recognition.ml.utils import (
     clean_predictions,
     get_image_files,
     image_to_df,

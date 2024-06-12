@@ -19,8 +19,8 @@
 import pathlib
 import click
 from sklearn.model_selection import train_test_split
-from arch.ml.utils import get_image_files, get_classes_and_features
-from arch.ml.train_and_predict import train_and_evaluate_model
+from layer_recognition.ml.utils import get_image_files, get_classes_and_features
+from layer_recognition.ml.train_and_predict import train_and_evaluate_model
 
 
 @click.command()

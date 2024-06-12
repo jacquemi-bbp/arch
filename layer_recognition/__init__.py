@@ -1,4 +1,4 @@
-""" arch """
+""" layer_recognition """
 
 # Copyright (C) 2021  Blue Brain Project, EPFL
 #

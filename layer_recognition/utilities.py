@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 
-# from arch.geometry import get_layer_thickness
+# from layer_recognition.geometry import get_layer_thickness
 
 
 def get_config(config_file_path: str):

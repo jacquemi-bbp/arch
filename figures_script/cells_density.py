@@ -26,8 +26,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from arch.visualisation import plot_cell_density_by_animal
-from arch.utilities import get_animals_id_list, get_animal_by_image_id
+from layer_recognition.visualisation import plot_cell_density_by_animal
+from layer_recognition.utilities import get_animals_id_list, get_animal_by_image_id
 
 # Customize matplotlib
 matplotlib.rcParams.update(

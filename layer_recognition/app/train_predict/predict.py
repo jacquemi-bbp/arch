@@ -21,8 +21,8 @@ import pathlib
 import click
 
 
-from arch.ml.train_and_predict import predict
-from arch.ml.utils import get_classes_and_features
+from layer_recognition.ml.train_and_predict import predict
+from layer_recognition.ml.utils import get_classes_and_features
 
 
 @click.command()

@@ -18,9 +18,9 @@
 
 import click
 
-from arch.convert import single_image_conversion
-from arch.io import list_images
-from arch.utilities import get_config
+from layer_recognition.convert import single_image_conversion
+from layer_recognition.io import list_images
+from layer_recognition.utilities import get_config
 
 
 @click.command()
