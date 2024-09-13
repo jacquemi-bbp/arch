@@ -230,32 +230,33 @@ def plot_mean_and_std_dev(
             list(density_df.groupby("depth_percentage")["densities"].apply(list).values)
         )
 
-        density_std = np.std(densities, axis=1)
-        density_mean = densities.mean(axis=1)
+        if densities.size > 0:
+            density_std = np.std(densities, axis=1)
+            density_mean = densities.mean(axis=1)
 
-        _ = plt.plot(
-            density_mean,
-            percentage,
-            label=label + " Mean densities",
-            linewidth=4,
-            c=color,
-        )
-        _ = plt.fill_betweenx(
-            percentage,
-            density_mean - density_std,
-            density_mean + density_std,
-            alpha=0.3,
-            color=color,
-            label=label + " Standard deviation",
-        )
-        plt.legend()
+            _ = plt.plot(
+                density_mean,
+                percentage,
+                label=label + " Mean densities",
+                linewidth=4,
+                c=color,
+            )
+            _ = plt.fill_betweenx(
+                percentage,
+                density_mean - density_std,
+                density_mean + density_std,
+                alpha=0.3,
+                color=color,
+                label=label + " Standard deviation",
+            )
+            plt.legend()
 
-        plt.gca().set_xlabel("Cell density [cells/mm$^3$]")
-        plt.gca().set_ylabel("Standard cortical depth [%]]")
-        current_values = plt.gca().get_xticks()
-        _ = plt.gca().set_xticklabels(["{:.1e}".format(x) for x in current_values])
-        current_values = plt.gca().get_yticks()
-        _ = plt.gca().set_yticklabels(["{:.1e}".format(x) for x in current_values])
+            plt.gca().set_xlabel("Cell density [cells/mm$^3$]")
+            plt.gca().set_ylabel("Standard cortical depth [%]]")
+            current_values = plt.gca().get_xticks()
+            _ = plt.gca().set_xticklabels(["{:.1e}".format(x) for x in current_values])
+            current_values = plt.gca().get_yticks()
+            _ = plt.gca().set_yticklabels(["{:.1e}".format(x) for x in current_values])
 
     plt.gca().invert_yaxis()
     if title:
@@ -356,6 +357,12 @@ def get_parser() -> argparse.ArgumentParser:
         "--png", help="if set generate png files instead of svg", action="store_true"
     )
 
+    parser.add_argument(
+        "--brain-area",
+        type=str,
+        help="Brain area name to include in the generates figures.",
+        required=False,
+    )
     return parser
 
 
@@ -370,6 +377,10 @@ if __name__ == "__main__":
     else:
         args.png = "svg"
 
+    if args.brain_area:
+        brain_area = args.brain_area
+    else: brain_area = ""
+
     if args.per_depth_path:
         file_list = glob.glob(str(args.per_depth_path) + "/*.csv")
         density_df = concate_density_dataframes(file_list)
@@ -382,7 +393,6 @@ if __name__ == "__main__":
 
         # Cell densities as function of brain depth
         data = dataframe_to_array(density_df)
-        print(f"median_density_percentage.svg data {data}")
         plot(
             data,
             "Cell density as a function of SSCX region percentage of depth.",
@@ -406,7 +416,7 @@ if __name__ == "__main__":
         print(f"Plot {np.unique(density_df.image).size} images included the data")
         plot_mean_and_std_dev(
             density_df,
-            title="Cell density as a function of percentage of depth of the S1HL brain region",
+            title=f"Cell density as a function of percentage of depth of the {brain_area} brain region",
             output_path=str(args.output_figure_path / "full_std_density_percentage.")
             + args.png,
             visualisation_flag=args.visualisation_flag,
@@ -462,7 +472,7 @@ if __name__ == "__main__":
                 [left_density_df, right_density_df],
                 labels=["left", "right"],
                 colors=["blue", "red"],
-                title="Cell density as a function of percentage of depth of the S1HL brain region",
+                title=f"Cell density as a function of percentage of depth of the {brain_area} brain region",
                 output_path=str(
                     args.output_figure_path / "left_right_std_density_percentage."
                 )
@@ -472,6 +482,9 @@ if __name__ == "__main__":
 
             project_ID_list = np.unique(analyse_df["Project_ID"])
 
+            
+            print(f'DEBUG project_ID_list {project_ID_list}')
+ 
             for project_id in project_ID_list:
                 animal_meta_df = analyse_df[analyse_df["Project_ID"] == project_id]
                 animal_image_id = list(animal_meta_df["Image_Name"])
@@ -503,7 +516,7 @@ if __name__ == "__main__":
             data = dataframe_to_array(animal_density_df)
             plot_mean_and_std_dev(
                 [animal_density_df],
-                title=f"animal {animal_id} POOL (LH+RH) mean and std cell density",
+                title=f"animal {animal_id} mean and std cell density",
                 output_path=f"{args.output_figure_path}/animal_{animal_id}_std_density_percentage."
                 + args.png,
                 visualisation_flag=args.visualisation_flag,
@@ -511,7 +524,7 @@ if __name__ == "__main__":
 
             plot(
                 data,
-                f"animal {animal_id} POOL (LH+RH) All traces cell density as a function of SSCX region percentage of depth",
+                f"animal {animal_id} ll traces cell density as a function of SSCX region percentage of depth",
                 plt_detail=True,
                 output_path=f"{args.output_figure_path}/animal_{animal_id}_all_traces."
                 + args.png,
